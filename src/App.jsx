@@ -52,6 +52,8 @@ export default function App() {
 
   function handleFinishInterview(sessionQuestions) {
     const newReport = buildReport(sessionQuestions, config);
+    const previousBest = history.reduce((max, h) => Math.max(max, h.overallScore), 0);
+    newReport.isPersonalBest = newReport.overallScore > previousBest;
     setReport(newReport);
     setFocusSkill(null);
 

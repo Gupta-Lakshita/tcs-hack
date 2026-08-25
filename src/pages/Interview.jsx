@@ -1,5 +1,5 @@
-import { useState } from "react";
-import Companion from "../components/Companion.jsx";
+import { useRef, useState } from "react";
+import Novi from "../components/Novi.jsx";
 import AnswerTimer from "../components/AnswerTimer.jsx";
 import {
   generateFeedback,
@@ -7,10 +7,27 @@ import {
   pickQuestion,
   scoreLabel,
   getTeachMeContent,
-  COMPANION_LINES,
+  NOVI_LINES,
   INTERVIEWER_FOLLOWUPS,
 } from "../data/mockData.js";
 import "./Interview.css";
+
+const METRIC_LABELS = {
+  technical: "Technical Accuracy",
+  relevance: "Relevance",
+  clarity: "Clarity",
+  confidence: "Confidence",
+};
+
+function summarizeFeedback(fb) {
+  const entries = Object.entries(METRIC_LABELS).map(([key, label]) => ({ label, value: fb[key] }));
+  const well = entries.filter((e) => e.value >= 7).map((e) => e.label);
+  const improve = entries.filter((e) => e.value < 7).map((e) => e.label);
+  return {
+    well: well.length ? well : [entries.slice().sort((a, b) => b.value - a.value)[0].label],
+    improve,
+  };
+}
 
 function pickLine(list) {
   return list[Math.floor(Math.random() * list.length)];
@@ -27,14 +44,20 @@ export default function Interview({ config, domain, totalQuestions, onFinish }) 
   const timerEnabled = Boolean(config?.timerEnabled);
   const timerSeconds = config?.timerSeconds || 60;
 
-  const [question, setQuestion] = useState(() => initialQuestion(interviewType, hasResume, domain));
-  const [usedTexts, setUsedTexts] = useState(() => [question.text]);
+  // Picked via a ref (not a useState lazy initializer) so the random pick
+  // stays stable even under StrictMode's double-invoked render in dev.
+  const firstQuestionRef = useRef(null);
+  if (firstQuestionRef.current === null) {
+    firstQuestionRef.current = initialQuestion(interviewType, hasResume, domain);
+  }
+  const [question, setQuestion] = useState(firstQuestionRef.current);
+  const [usedTexts, setUsedTexts] = useState(() => [firstQuestionRef.current.text]);
   const [qIndex, setQIndex] = useState(1);
   const [answer, setAnswer] = useState("");
   const [phase, setPhase] = useState("answering"); // answering | feedback | teach | retry-feedback
   const [feedback, setFeedback] = useState(null);
   const [beforeScore, setBeforeScore] = useState(null);
-  const [companionLine, setCompanionLine] = useState("");
+  const [noviLine, setNoviLine] = useState("");
   const [sessionLog, setSessionLog] = useState([]);
   const [lastBucket, setLastBucket] = useState(null);
   const [timeUp, setTimeUp] = useState(false);
@@ -46,14 +69,8 @@ export default function Interview({ config, domain, totalQuestions, onFinish }) 
     setFeedback(fb);
 
     const bucket = scoreLabel(fb.average);
-    setCompanionLine(
-      pickLine(
-        bucket === "strong"
-          ? COMPANION_LINES.strongAnswer
-          : bucket === "average"
-          ? COMPANION_LINES.averageAnswer
-          : COMPANION_LINES.weakAnswer
-      )
+    setNoviLine(
+      pickLine(bucket === "strong" ? NOVI_LINES.strongAnswer : bucket === "average" ? NOVI_LINES.averageAnswer : NOVI_LINES.weakAnswer)
     );
 
     setPhase(beforeScore !== null ? "retry-feedback" : "feedback");
@@ -106,6 +123,8 @@ export default function Interview({ config, domain, totalQuestions, onFinish }) 
 
   const teachContent = phase === "teach" ? getTeachMeContent(question.topic) : null;
   const followupLine = qIndex > 1 && lastBucket && phase === "answering" ? INTERVIEWER_FOLLOWUPS[coachStyle]?.[lastBucket] : null;
+  const noviPose = feedback ? (scoreLabel(feedback.average) === "strong" ? "strong" : scoreLabel(feedback.average) === "average" ? "encourage" : "thinking") : "thinking";
+  const summary = phase === "feedback" || phase === "retry-feedback" ? summarizeFeedback(feedback) : null;
 
   return (
     <div className="interview-wrap">
@@ -127,6 +146,10 @@ export default function Interview({ config, domain, totalQuestions, onFinish }) 
           {question.personalized && <span className="badge badge-powder">From your resume</span>}
         </div>
         <h2 className="question-text">{question.text}</h2>
+
+        {phase === "answering" && question.difficulty === "Hard" && (
+          <Novi pose="thinking" size="sm" message={NOVI_LINES.thinkingHard} />
+        )}
 
         {(phase === "answering") && (
           <form onSubmit={handleSubmit} className="answer-form">
@@ -152,17 +175,46 @@ export default function Interview({ config, domain, totalQuestions, onFinish }) 
 
         {phase === "feedback" && feedback && (
           <div className="feedback-panel">
+            <div className="fb-score-row">
+              <span className="fb-score-badge">{Math.round(feedback.average * 10)}<span>/100</span></span>
+              <Novi size="sm" pose={noviPose} message={noviLine} />
+            </div>
+
+            <div className="fb-summary">
+              {summary.well.length > 0 && (
+                <div className="fb-block fb-well">
+                  <span className="fb-block-label">What You Did Well</span>
+                  <ul>
+                    {summary.well.map((w) => (
+                      <li key={w}>{w}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {summary.improve.length > 0 && (
+                <div className="fb-block fb-improve">
+                  <span className="fb-block-label">What To Improve</span>
+                  <ul>
+                    {summary.improve.map((w) => (
+                      <li key={w}>{w}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+
+            <div className="coach-tip">
+              <span className="coach-label">Suggested Approach</span>
+              <p>{feedback.tip}</p>
+            </div>
+
             <div className="feedback-scores">
               <ScoreItem label="Technical Accuracy" value={feedback.technical} />
               <ScoreItem label="Relevance" value={feedback.relevance} />
               <ScoreItem label="Clarity" value={feedback.clarity} />
               <ScoreItem label="Confidence" value={feedback.confidence} />
             </div>
-            <div className="coach-tip">
-              <span className="coach-label">AI Coach Tip</span>
-              <p>{feedback.tip}</p>
-            </div>
-            <Companion size="sm" mood={scoreLabel(feedback.average) === "strong" ? "excited" : "neutral"} message={companionLine} />
+
             <div className="feedback-actions">
               <button className="btn btn-secondary teach-cta" onClick={handleTeachMe}>
                 I Can Teach You Too
@@ -176,6 +228,7 @@ export default function Interview({ config, domain, totalQuestions, onFinish }) 
 
         {phase === "teach" && teachContent && (
           <div className="teach-panel">
+            <Novi pose="teach" size="sm" message={NOVI_LINES.teachIntro} />
             <span className="teach-label">I Can Teach You Too</span>
             <p className="teach-support">Not sure about this one? No problem. I'll break it down, then you can try again.</p>
             <p className="teach-concept">{teachContent.concept}</p>
@@ -209,7 +262,7 @@ export default function Interview({ config, domain, totalQuestions, onFinish }) 
                 <span className="ba-value ba-after">{Math.round(feedback.average)}/10</span>
               </div>
             </div>
-            <Companion size="sm" mood="excited" message={COMPANION_LINES.teachMeRetry} />
+            <Novi size="sm" pose="celebrate" message={NOVI_LINES.teachMeRetry} />
 
             <div className="feedback-scores">
               <ScoreItem label="Technical Accuracy" value={feedback.technical} />

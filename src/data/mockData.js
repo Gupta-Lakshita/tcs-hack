@@ -394,18 +394,20 @@ export function getTeachMeContent(topic) {
   return TEACH_ME_CONTENT[topic] || TEACH_ME_CONTENT.default;
 }
 
-// Companion ("Pip") lines shown across the app.
-export const COMPANION_LINES = {
-  dashboardReturning: "Ready for another round?",
-  dashboardFirstTime: "Good to see you. Let's find out where you stand.",
+// Novi's lines, shown across the app — at most once per screen/state.
+export const NOVI_LINES = {
+  greeting: "Hey! Ready?",
+  focusNudge: "Nailed this next?",
   preInterview: "Don't worry about getting everything right. This is practice.",
-  strongAnswer: ["Okayyy, that was good 👀", "Nice, you really know this one.", "That's the answer I wanted to hear!"],
-  averageAnswer: ["Not bad — a little more detail next time.", "Solid attempt, let's sharpen it.", "You're close, keep going."],
+  teachIntro: "Don't worry — I can teach you too!",
+  thinkingHard: "Hmm... let's think.",
+  strongAnswer: ["Okayyy, I see you 👀", "That's a good one!", "Nice, you really know this one!"],
+  averageAnswer: ["You've got this — keep going.", "Solid attempt, let's sharpen it.", "You're close, keep going."],
   weakAnswer: ["No worries, this is exactly what practice is for.", "Let's slow down and rebuild this one.", "Everyone stumbles on this — let's fix it."],
   teachMeRetry: "Nice! You improved on that one.",
-  finishedBest: "Nice work! That's your best score yet.",
-  finishedGood: "Solid round. Your consistency is showing.",
-  improvement: (points) => `+${points} points! Look at you.`,
+  celebrate: "OKAYYY! That was good!",
+  celebrateSolid: "Solid round. Your consistency is showing.",
+  personalBest: "NEW PERSONAL BEST!",
 };
 
 // Skill detail panels — opened by clicking a skill card on the dashboard.

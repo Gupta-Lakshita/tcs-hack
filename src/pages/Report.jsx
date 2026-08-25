@@ -1,10 +1,13 @@
-import Companion from "../components/Companion.jsx";
-import { COMPANION_LINES } from "../data/mockData.js";
+import Novi from "../components/Novi.jsx";
+import { NOVI_LINES } from "../data/mockData.js";
+import { useCountUp } from "../hooks/useCountUp.js";
 import "./Report.css";
 
 export default function Report({ report, onPracticeAgain, onBackToDashboard }) {
   const maxScore = Math.max(...report.questions.map((q) => q.score));
-  const companionMsg = report.overallScore >= 80 ? COMPANION_LINES.finishedBest : COMPANION_LINES.finishedGood;
+  const scoreCount = useCountUp(report.overallScore);
+  const noviPose = report.isPersonalBest ? "personalBest" : "celebrate";
+  const noviMsg = report.isPersonalBest ? NOVI_LINES.personalBest : report.overallScore >= 80 ? NOVI_LINES.celebrate : NOVI_LINES.celebrateSolid;
 
   return (
     <div className="report-wrap">
@@ -13,12 +16,12 @@ export default function Report({ report, onPracticeAgain, onBackToDashboard }) {
           <h1>Interview Performance</h1>
           <p className="tagline">Your AI-generated interview readiness report.</p>
         </div>
-        <Companion mood="excited" size="sm" message={companionMsg} />
+        <Novi pose={noviPose} size="sm" message={noviMsg} />
       </div>
 
       <section className="card hero-section">
         <div className="overall-block">
-          <span className="overall-score">{report.overallScore}</span>
+          <span className="overall-score gradient-text">{scoreCount}</span>
           <span className="overall-max">/ 100</span>
           <span className="overall-label">Interview Readiness</span>
         </div>
