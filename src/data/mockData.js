@@ -12,16 +12,22 @@ export const QUESTION_BANK = {
       { topic: "Data Structures", text: "What is the difference between an array and a linked list?" },
       { topic: "Web Basics", text: "Explain the difference between HTTP and HTTPS." },
       { topic: "OOP", text: "What is the difference between a class and an object?" },
+      { topic: "Data Structures", text: "When would you use a stack instead of a queue?" },
+      { topic: "Web Basics", text: "What happens, step by step, when you type a URL into a browser and hit enter?" },
     ],
     Medium: [
       { topic: "OOP", text: "You mentioned using object-oriented programming in your project. Can you explain where polymorphism was useful?" },
       { topic: "Data Structures", text: "How would you find duplicate elements in an array efficiently?" },
       { topic: "SQL", text: "Explain the difference between SQL joins: INNER, LEFT, and RIGHT." },
+      { topic: "OOP", text: "What's the difference between inheritance and composition, and when would you prefer one over the other?" },
+      { topic: "Data Structures", text: "How would you check if a string of brackets is balanced?" },
     ],
     Hard: [
       { topic: "System Design", text: "How would you design a URL shortening service like bit.ly?" },
       { topic: "Problem Solving", text: "Given a stream of numbers, how would you find the median at any point efficiently?" },
       { topic: "System Design", text: "How would you design a rate limiter for a high-traffic API?" },
+      { topic: "Problem Solving", text: "How would you detect a cycle in a linked list without using extra memory?" },
+      { topic: "System Design", text: "How would you design a notification system that fans out to millions of users?" },
     ],
   },
   HR: {
@@ -29,16 +35,22 @@ export const QUESTION_BANK = {
       { topic: "Introduction", text: "Tell me about yourself and why you're interested in this role." },
       { topic: "Motivation", text: "Why do you want to work at this company?" },
       { topic: "Teamwork", text: "Describe a time you worked well as part of a team." },
+      { topic: "Introduction", text: "What are you looking for in your next role?" },
+      { topic: "Motivation", text: "What draws you to this particular field?" },
     ],
     Medium: [
       { topic: "Conflict Resolution", text: "Tell me about a time you disagreed with a teammate. How did you handle it?" },
       { topic: "Leadership", text: "Describe a situation where you had to take initiative without being asked." },
       { topic: "Failure", text: "Tell me about a time you failed at something. What did you learn?" },
+      { topic: "Conflict Resolution", text: "Describe a time you had to give someone feedback they didn't want to hear." },
+      { topic: "Leadership", text: "Tell me about a time you had to motivate a team through a difficult period." },
     ],
     Hard: [
       { topic: "Pressure Handling", text: "Describe a high-pressure situation with a tight deadline and conflicting priorities. How did you navigate it?" },
       { topic: "Difficult Stakeholders", text: "Tell me about a time you had to influence someone who strongly disagreed with you, without any formal authority." },
       { topic: "Ethical Judgment", text: "Describe a time you faced an ethical dilemma at work or during a project. How did you resolve it?" },
+      { topic: "Pressure Handling", text: "Tell me about a time everything that could go wrong did. How did you keep things moving?" },
+      { topic: "Difficult Stakeholders", text: "Describe a time you had to say no to someone more senior than you. How did you handle it?" },
     ],
   },
 };
@@ -51,154 +63,220 @@ export const DOMAIN_QUESTION_BANKS = {
     Easy: [
       { topic: "Fundamentals", text: "Walk me through a project where you applied core engineering principles to solve a real problem." },
       { topic: "Tools", text: "Which design or simulation tools have you used, and what did you use them for?" },
+      { topic: "Fundamentals", text: "How do you decide which specifications actually matter most for a given design?" },
+      { topic: "Tools", text: "Tell me about a time a tool or measurement gave you an unexpected result. What did you do?" },
     ],
     Medium: [
       { topic: "Design Trade-offs", text: "Describe a time you had to balance cost, performance, and safety in a design decision." },
       { topic: "Fundamentals", text: "How do you validate that a design will hold up under real-world conditions before it's built?" },
+      { topic: "Design Trade-offs", text: "Tell me about a time you had to choose between two materials or methods with different trade-offs." },
+      { topic: "Systems Thinking", text: "How do you make sure a change in one part of a system doesn't break another part?" },
     ],
     Hard: [
       { topic: "Systems Thinking", text: "If a component fails in the field, how would you trace the root cause across a multi-part system?" },
       { topic: "Design Trade-offs", text: "How would you redesign an existing product to cut cost by 20% without compromising safety?" },
+      { topic: "Systems Thinking", text: "How would you design for a failure mode that only shows up after months of continuous use?" },
+      { topic: "Design Trade-offs", text: "You inherit a design with a known flaw close to a deadline — how do you decide whether to fix it now or ship and patch later?" },
     ],
   },
   Business: {
     Easy: [
       { topic: "Fundamentals", text: "How would you explain your understanding of a target market to someone outside the business?" },
       { topic: "Communication", text: "Tell me about a group project where you helped align the team on a shared goal." },
+      { topic: "Fundamentals", text: "What makes a brand memorable to you, and why?" },
+      { topic: "Communication", text: "Describe a time you had to pitch an idea to someone who wasn't convinced at first." },
     ],
     Medium: [
       { topic: "Strategy", text: "How would you approach launching a new product in a market with an established competitor?" },
       { topic: "Analytics", text: "How would you measure whether a marketing campaign was actually successful?" },
+      { topic: "Strategy", text: "How would you decide which customer segment to prioritize with limited budget?" },
+      { topic: "Analytics", text: "A campaign got a lot of clicks but few conversions — how would you investigate why?" },
     ],
     Hard: [
       { topic: "Strategy", text: "Sales are declining in one region despite a growing market — how would you diagnose and fix it?" },
       { topic: "Prioritization", text: "You have three high-impact initiatives but budget for one. How do you decide?" },
+      { topic: "Strategy", text: "A competitor just undercut your pricing significantly — how would you respond?" },
+      { topic: "Prioritization", text: "Two stakeholders want conflicting things from the same campaign — how do you resolve it?" },
     ],
   },
   Finance: {
     Easy: [
       { topic: "Fundamentals", text: "How would you explain the difference between a balance sheet and an income statement?" },
       { topic: "Fundamentals", text: "What factors would you consider before recommending an investment?" },
+      { topic: "Fundamentals", text: "How would you explain compound interest to someone with no finance background?" },
+      { topic: "Fundamentals", text: "What's the difference between a fixed and a variable cost, with an example?" },
     ],
     Medium: [
       { topic: "Analysis", text: "How would you assess whether a company is financially healthy using its financial statements?" },
       { topic: "Risk", text: "Describe how you'd evaluate the risk of extending credit to a new client." },
+      { topic: "Analysis", text: "Two companies have similar revenue but very different profit margins — how would you investigate why?" },
+      { topic: "Risk", text: "How would you decide whether a business should take on new debt to fund growth?" },
     ],
     Hard: [
       { topic: "Valuation", text: "Walk me through how you'd value a company that has no profit yet but strong revenue growth." },
       { topic: "Risk", text: "How would you structure a hedge against currency risk for a business with overseas suppliers?" },
+      { topic: "Valuation", text: "How would you explain a sharp drop in a company's valuation to a non-finance stakeholder?" },
+      { topic: "Risk", text: "How would you stress-test a financial model against a sudden market downturn?" },
     ],
   },
   Science: {
     Easy: [
       { topic: "Method", text: "Walk me through how you'd design an experiment to test a simple hypothesis." },
       { topic: "Fundamentals", text: "Tell me about a research project or lab experience and what you learned from it." },
+      { topic: "Method", text: "Why is a control group important in an experiment?" },
+      { topic: "Fundamentals", text: "How do you decide which variable to measure when testing an idea?" },
     ],
     Medium: [
       { topic: "Analysis", text: "How would you make sure your experimental results aren't due to bias or a confounding variable?" },
       { topic: "Method", text: "Describe a time an experiment didn't go as expected. How did you respond?" },
+      { topic: "Analysis", text: "How would you decide if a surprising result is worth reporting or likely an error?" },
+      { topic: "Method", text: "How would you design a follow-up experiment based on an inconclusive result?" },
     ],
     Hard: [
       { topic: "Research Design", text: "How would you design a study to test a hypothesis when you can't run a controlled experiment?" },
       { topic: "Analysis", text: "How would you communicate a complex, uncertain result to a non-technical stakeholder?" },
+      { topic: "Research Design", text: "How would you design research to test something that plays out over years, on a tight timeline?" },
+      { topic: "Analysis", text: "How would you handle a result that contradicts a well-established finding in your field?" },
     ],
   },
   Arts: {
     Easy: [
       { topic: "Communication", text: "Tell me about a piece of writing or content you're proud of and why it worked." },
       { topic: "Fundamentals", text: "How do you research a topic you don't know much about before writing on it?" },
+      { topic: "Communication", text: "How do you know when a piece of writing is actually finished?" },
+      { topic: "Fundamentals", text: "What makes a piece of content stand out to you as a reader?" },
     ],
     Medium: [
       { topic: "Storytelling", text: "How would you adapt your writing style for two very different audiences?" },
       { topic: "Communication", text: "Tell me about a time you had to explain a complicated idea simply." },
+      { topic: "Storytelling", text: "How would you turn a dry, factual topic into something people want to read?" },
+      { topic: "Communication", text: "Describe a time an editor or peer pushed back hard on your work. How did you respond?" },
     ],
     Hard: [
       { topic: "Editorial Judgment", text: "How would you handle a story or piece under a tight deadline with incomplete information?" },
       { topic: "Storytelling", text: "How would you build a content strategy for a brand with no prior audience?" },
+      { topic: "Editorial Judgment", text: "How would you handle publishing something you personally disagreed with editorially?" },
+      { topic: "Storytelling", text: "How would you keep a long-running series fresh after the initial idea runs out?" },
     ],
   },
   Design: {
     Easy: [
       { topic: "Process", text: "Walk me through your design process from brief to final output." },
       { topic: "Fundamentals", text: "Tell me about a design decision you made and the reasoning behind it." },
+      { topic: "Process", text: "How do you know when to stop iterating on a design?" },
+      { topic: "Fundamentals", text: "What makes a design feel intuitive to you?" },
     ],
     Medium: [
       { topic: "User-Centered Design", text: "How do you balance user needs with business or technical constraints?" },
       { topic: "Feedback", text: "Describe a time you received harsh feedback on your design. How did you respond?" },
+      { topic: "User-Centered Design", text: "How would you design for a user who isn't like you at all?" },
+      { topic: "Feedback", text: "How would you push back on a stakeholder's design request you disagree with?" },
     ],
     Hard: [
       { topic: "Process", text: "How would you redesign a product experience that users find confusing, without a full rebuild?" },
       { topic: "User-Centered Design", text: "How would you validate a design decision when you can't run user testing?" },
+      { topic: "Process", text: "How would you design for accessibility when it wasn't considered from the start?" },
+      { topic: "User-Centered Design", text: "How would you resolve conflicting feedback from two different user groups?" },
     ],
   },
   Law: {
     Easy: [
       { topic: "Fundamentals", text: "Walk me through how you'd research a legal question you haven't encountered before." },
       { topic: "Communication", text: "How would you explain a complex legal clause to a non-legal client?" },
+      { topic: "Fundamentals", text: "What does 'due diligence' mean to you in practice?" },
+      { topic: "Communication", text: "How would you deliver bad legal news to a client?" },
     ],
     Medium: [
       { topic: "Analysis", text: "How would you identify risk in a contract before it's signed?" },
       { topic: "Ethics", text: "Describe how you'd handle a situation where a client asks you to do something ethically questionable." },
+      { topic: "Analysis", text: "How would you handle a contract with a clause that's ambiguous?" },
+      { topic: "Ethics", text: "How would you handle discovering a conflict of interest partway through a case?" },
     ],
     Hard: [
       { topic: "Analysis", text: "How would you build a case when the available evidence is largely circumstantial?" },
       { topic: "Negotiation", text: "Walk me through how you'd negotiate a contract term the other side refuses to move on." },
+      { topic: "Analysis", text: "How would you argue a position you personally think is legally weak, but must represent?" },
+      { topic: "Negotiation", text: "How would you keep a negotiation moving when talks have completely stalled?" },
     ],
   },
   Medical: {
     Easy: [
       { topic: "Fundamentals", text: "Tell me about a time you had to stay calm and think clearly under pressure." },
       { topic: "Communication", text: "How would you explain a diagnosis or treatment plan to a worried patient?" },
+      { topic: "Fundamentals", text: "How do you stay current with best practices in your field?" },
+      { topic: "Communication", text: "How would you handle a patient who doesn't trust your recommendation?" },
     ],
     Medium: [
       { topic: "Clinical Judgment", text: "How would you handle a situation where a patient's symptoms don't match the obvious diagnosis?" },
       { topic: "Ethics", text: "Describe how you'd handle a disagreement with a colleague over a patient's care plan." },
+      { topic: "Clinical Judgment", text: "How would you decide when to escalate a case to a specialist?" },
+      { topic: "Ethics", text: "How would you handle a patient who refuses a treatment you believe they need?" },
     ],
     Hard: [
       { topic: "Clinical Judgment", text: "How would you prioritize care when multiple patients need urgent attention at once?" },
       { topic: "Ethics", text: "Walk me through how you'd handle a case with a difficult ethical trade-off in patient care." },
+      { topic: "Clinical Judgment", text: "How would you handle a case where the standard treatment isn't working and you're running out of options?" },
+      { topic: "Ethics", text: "How would you handle a mistake you made that affected a patient's care?" },
     ],
   },
   Hospitality: {
     Easy: [
       { topic: "Service", text: "Tell me about a time you turned a frustrated customer into a happy one." },
       { topic: "Fundamentals", text: "What does great guest experience mean to you?" },
+      { topic: "Service", text: "How do you read what a guest needs before they ask?" },
+      { topic: "Fundamentals", text: "Tell me about a great service experience you had as a customer. What made it great?" },
     ],
     Medium: [
       { topic: "Operations", text: "How would you handle overbooking during a peak season with no easy fix?" },
       { topic: "Service", text: "Describe how you'd train a new team member to deliver consistent service." },
+      { topic: "Operations", text: "How would you keep service standards consistent across a large team?" },
+      { topic: "Service", text: "Describe a time you had to say no to a guest request. How did you handle it?" },
     ],
     Hard: [
       { topic: "Operations", text: "How would you manage a service failure that's affecting many guests at once, with limited staff?" },
       { topic: "Service", text: "How would you rebuild guest trust after a major service breakdown?" },
+      { topic: "Operations", text: "How would you handle a staffing shortage during your busiest period of the year?" },
+      { topic: "Service", text: "How would you handle a guest complaint that's gone public online?" },
     ],
   },
   Education: {
     Easy: [
       { topic: "Fundamentals", text: "How would you explain a difficult concept to a student who's struggling with it?" },
       { topic: "Communication", text: "Tell me about a time you adapted your teaching style for a specific learner." },
+      { topic: "Fundamentals", text: "What makes a lesson memorable for students, in your experience?" },
+      { topic: "Communication", text: "How would you explain a student's progress to a concerned parent?" },
     ],
     Medium: [
       { topic: "Engagement", text: "How would you keep a classroom engaged when covering a topic students find boring?" },
       { topic: "Assessment", text: "How do you measure whether students actually understood a lesson, not just memorized it?" },
+      { topic: "Engagement", text: "How would you handle a classroom with a very wide range of ability levels?" },
+      { topic: "Assessment", text: "How would you redesign an assessment that most students failed?" },
     ],
     Hard: [
       { topic: "Curriculum Design", text: "How would you redesign a curriculum for a classroom with a wide range of skill levels?" },
       { topic: "Engagement", text: "How would you handle a consistently disengaged student without singling them out?" },
+      { topic: "Curriculum Design", text: "How would you adapt a curriculum for a group with limited access to resources or technology?" },
+      { topic: "Engagement", text: "How would you rebuild trust with a class after a lesson went badly?" },
     ],
   },
   General: {
     Easy: [
       { topic: "Introduction", text: "Tell me about yourself and what draws you to this field." },
       { topic: "Fundamentals", text: "What's a skill you're still building, and how are you working on it?" },
+      { topic: "Introduction", text: "What kind of work energizes you most?" },
+      { topic: "Fundamentals", text: "Tell me about something you taught yourself outside of school." },
     ],
     Medium: [
       { topic: "Problem Solving", text: "Tell me about a time you solved a problem with limited information or resources." },
       { topic: "Adaptability", text: "Describe a time you had to quickly learn something new to get a task done." },
+      { topic: "Problem Solving", text: "Describe a time your first approach to a problem didn't work. What did you do next?" },
+      { topic: "Adaptability", text: "Tell me about a time plans changed suddenly and you had to adjust." },
     ],
     Hard: [
       { topic: "Judgment", text: "Tell me about the hardest decision you've had to make with incomplete information." },
       { topic: "Problem Solving", text: "How would you approach a completely unfamiliar problem in your field?" },
+      { topic: "Judgment", text: "Describe a time you had to choose between two options that were both imperfect." },
+      { topic: "Problem Solving", text: "Tell me about a time you had to solve a problem outside your usual area of expertise." },
     ],
   },
 };
@@ -676,16 +754,84 @@ function starTip(star) {
 
 // Mock "AI scoring" of a free-text answer — biased by length/effort so the
 // demo feels responsive to real input while staying reliable offline.
-// `context` optionally carries { topic, isBehavioral } for a small dose of
-// question-aware analysis instead of pure generic scoring.
-export function generateFeedback(answerText, coachStyle = "Friendly", context = {}) {
-  const words = answerText.trim().split(/\s+/).filter(Boolean).length;
-  const lengthScore = clamp(3 + words / 9, 3, 9.5);
+// Reads real (if shallow) signals out of the answer text so scoring
+// responds to what was actually written, not just how long it is.
+function analyzeAnswerSignals(text) {
+  const trimmed = text.trim();
+  const words = trimmed.split(/\s+/).filter(Boolean);
+  const wordCount = words.length;
+  const sentenceCount = trimmed.split(/[.!?]+/).map((s) => s.trim()).filter(Boolean).length;
+  const normalized = words.map((w) => w.toLowerCase().replace(/[^a-z0-9]/g, "")).filter(Boolean);
+  const uniqueRatio = normalized.length > 0 ? new Set(normalized).size / normalized.length : 0;
+  return {
+    wordCount,
+    sentenceCount,
+    uniqueRatio,
+    hasNumbers: /\d/.test(trimmed),
+    hasExample: /\b(for example|such as|for instance|e\.g\.|specifically)\b/i.test(trimmed),
+    hasReasoning: /\b(because|since|therefore|as a result|which (led|resulted)|due to)\b/i.test(trimmed),
+  };
+}
 
-  const technical = clamp(jitter(lengthScore, 1.2), 1, 10);
-  const relevance = clamp(jitter(lengthScore, 1), 1, 10);
-  let clarity = clamp(jitter(lengthScore, 1.3), 1, 10);
-  const confidence = clamp(jitter(lengthScore, 1.5), 1, 10);
+// Jaccard similarity on word sets — used to catch "pasted the same answer
+// again" so the feedback can call that out instead of scoring it fresh.
+function textSimilarity(a, b) {
+  const setA = new Set(a.toLowerCase().split(/\s+/).filter(Boolean));
+  const setB = new Set(b.toLowerCase().split(/\s+/).filter(Boolean));
+  if (setA.size === 0 || setB.size === 0) return 0;
+  let overlap = 0;
+  for (const w of setA) if (setB.has(w)) overlap += 1;
+  return overlap / new Set([...setA, ...setB]).size;
+}
+
+const METRIC_TIPS = {
+  technical: {
+    strong: "Your grasp of the details is strong — try quantifying the impact with a number next time.",
+    average: "The core idea is right, but back it with a specific fact, figure, or mechanism.",
+    weak: "This needs more grounding — anchor your answer in something concrete you actually know, not a general impression.",
+  },
+  relevance: {
+    strong: "You stayed tightly on-topic — that focus is working well.",
+    average: "Good relevance overall, but part of the answer drifted — tie every sentence back to the actual question.",
+    weak: "The answer doesn't fully address what was asked — re-read the question and respond to it directly first.",
+  },
+  clarity: {
+    strong: "Clear and easy to follow — that structure is a real strength.",
+    average: "Mostly clear, but tighten it — lead with your main point, then support it.",
+    weak: "This is hard to follow as written — break it into a couple of short, ordered points.",
+  },
+  confidence: {
+    strong: "You sound confident and decisive — keep that tone.",
+    average: "Reasonably confident, but a stronger closing sentence would leave a better final impression.",
+    weak: "This reads hesitant — state your point directly instead of hedging around it.",
+  },
+};
+
+function pickMetricTip(metrics) {
+  const entries = Object.entries(metrics);
+  const weakest = entries.slice().sort((a, b) => a[1] - b[1])[0];
+  const bucket = scoreLabel(weakest[1]);
+  return METRIC_TIPS[weakest[0]][bucket];
+}
+
+// `context` optionally carries { topic, isBehavioral, previousAnswer } for
+// a small dose of question-aware analysis instead of pure generic scoring.
+export function generateFeedback(answerText, coachStyle = "Friendly", context = {}) {
+  const signals = analyzeAnswerSignals(answerText);
+  const baseline = clamp(3 + signals.wordCount / 10, 3, 8.5);
+
+  let technical = clamp(baseline + (signals.hasNumbers ? 1 : 0) + (signals.hasReasoning ? 0.6 : 0) + jitter(0, 0.6), 1, 10);
+  let relevance = clamp(baseline + (signals.uniqueRatio > 0.55 ? 0.8 : -0.3) + jitter(0, 0.5), 1, 10);
+  let clarity = clamp(baseline + (signals.sentenceCount >= 2 ? 0.8 : -0.6) + (signals.uniqueRatio < 0.4 ? -1.2 : 0) + jitter(0, 0.5), 1, 10);
+  let confidence = clamp(baseline + (signals.hasExample ? 0.9 : 0) + jitter(0, 0.7), 1, 10);
+
+  const repeat = context.previousAnswer ? textSimilarity(answerText, context.previousAnswer) : 0;
+  if (repeat > 0.6) {
+    technical = clamp(technical - 3, 1, 10);
+    relevance = clamp(relevance - 3, 1, 10);
+    clarity = clamp(clarity - 2, 1, 10);
+    confidence = clamp(confidence - 2, 1, 10);
+  }
 
   let star = null;
   if (context.isBehavioral) {
@@ -697,8 +843,19 @@ export function generateFeedback(answerText, coachStyle = "Friendly", context = 
 
   const avg = (technical + relevance + clarity + confidence) / 4;
   const bucket = scoreLabel(avg);
-  const tips = (COACH_TIPS_BY_STYLE[coachStyle] || COACH_TIPS_BY_STYLE.Friendly)[bucket];
-  const tip = star ? starTip(star) : tips[Math.floor(Math.random() * tips.length)];
+
+  let tip;
+  if (repeat > 0.6) {
+    tip = "This looks very close to your last answer — try a different angle: a specific example, a number, or a new detail this time.";
+  } else if (star) {
+    tip = starTip(star);
+  } else {
+    const tips = (COACH_TIPS_BY_STYLE[coachStyle] || COACH_TIPS_BY_STYLE.Friendly)[bucket];
+    const useMetricTip = Math.random() < 0.5;
+    tip = useMetricTip
+      ? pickMetricTip({ technical, relevance, clarity, confidence })
+      : tips[Math.floor(Math.random() * tips.length)];
+  }
 
   return {
     technical: Math.round(technical * 10) / 10,
@@ -708,6 +865,7 @@ export function generateFeedback(answerText, coachStyle = "Friendly", context = 
     average: Math.round(avg * 10) / 10,
     tip,
     star,
+    isRepeat: repeat > 0.6,
   };
 }
 
@@ -748,7 +906,15 @@ export function pickQuestion(interviewType, difficulty, usedTexts, hasResume, pr
 
   const pools = banks.flatMap((bank) => bank[difficulty]);
   const available = pools.filter((q) => !usedTexts.includes(q.text));
-  const pool = available.length > 0 ? available : pools;
+  if (available.length > 0) {
+    return personalize(available[Math.floor(Math.random() * available.length)], hasResume);
+  }
+
+  // This difficulty tier is exhausted — try any other unused question in
+  // the same domain(s) before ever repeating one already asked.
+  const everything = banks.flatMap((bank) => DIFFICULTIES.flatMap((d) => bank[d]));
+  const anyUnused = everything.filter((q) => !usedTexts.includes(q.text));
+  const pool = anyUnused.length > 0 ? anyUnused : pools;
   const picked = pool[Math.floor(Math.random() * pool.length)];
   return personalize(picked, hasResume);
 }

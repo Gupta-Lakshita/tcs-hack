@@ -63,6 +63,7 @@ export default function Interview({ config, domain, totalQuestions, onFinish }) 
   const [sessionLog, setSessionLog] = useState([]);
   const [lastBucket, setLastBucket] = useState(null);
   const [timeUp, setTimeUp] = useState(false);
+  const [previousAnswer, setPreviousAnswer] = useState("");
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -70,8 +71,10 @@ export default function Interview({ config, domain, totalQuestions, onFinish }) 
     const fb = generateFeedback(answer, coachStyle, {
       isBehavioral: isBehavioralTopic(question.topic),
       topic: question.topic,
+      previousAnswer,
     });
     setFeedback(fb);
+    setPreviousAnswer(answer);
 
     const bucket = scoreLabel(fb.average);
     setNoviLine(
