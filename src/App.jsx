@@ -31,8 +31,8 @@ export default function App() {
     setView(pathInfo ? "setup" : "path");
   }
 
-  function handlePracticeSkill(skillName) {
-    setFocusSkill(skillName);
+  function handlePracticeSkill(skillId) {
+    setFocusSkill(skillId);
     setView(pathInfo ? "setup" : "path");
   }
 
@@ -68,6 +68,7 @@ export default function App() {
         id: `h-${Date.now()}`,
         role: newReport.role,
         type: newReport.type,
+        domain: newReport.domain,
         overallScore: newReport.overallScore,
         technical: newReport.technical,
         communication: newReport.communication,
@@ -130,7 +131,7 @@ export default function App() {
       )}
       {view === "path" && <ChoosePath onChoose={handlePathChosen} />}
       {view === "setup" && (
-        <Setup pathInfo={pathInfo} focusSkill={focusSkill} onContinue={handleSetupContinue} />
+        <Setup pathInfo={pathInfo} domain={domain} focusSkill={focusSkill} onContinue={handleSetupContinue} />
       )}
       {view === "intro" && <Intro config={config} onBegin={handleBeginInterview} />}
       {view === "interview" && (

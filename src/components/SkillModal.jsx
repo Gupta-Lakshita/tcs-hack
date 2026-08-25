@@ -1,8 +1,8 @@
 import { getSkillDetail } from "../data/mockData.js";
 import "./SkillModal.css";
 
-export default function SkillModal({ skillName, score, onClose, onPractice }) {
-  const detail = getSkillDetail(skillName, score);
+export default function SkillModal({ skillId, domain, score, onClose, onPractice }) {
+  const detail = getSkillDetail(skillId, score, domain);
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -11,7 +11,7 @@ export default function SkillModal({ skillName, score, onClose, onPractice }) {
           ✕
         </button>
 
-        <span className="skill-modal-eyebrow">{skillName}</span>
+        <span className="skill-modal-eyebrow">{detail.label}</span>
         <div className="skill-modal-score">
           {score}
           <span>/ 100</span>
@@ -50,8 +50,8 @@ export default function SkillModal({ skillName, score, onClose, onPractice }) {
           </div>
         </div>
 
-        <button className="btn btn-primary skill-modal-cta" onClick={() => onPractice(skillName)}>
-          Practice {skillName} →
+        <button className="btn btn-primary skill-modal-cta" onClick={() => onPractice(skillId)}>
+          Practice {detail.label} →
         </button>
       </div>
     </div>

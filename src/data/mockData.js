@@ -2,6 +2,8 @@
 // interview history. Structured so it can later be swapped for real AI
 // responses without touching the UI.
 
+import { domainForCategory } from "./careerData.js";
+
 export const DIFFICULTIES = ["Easy", "Medium", "Hard"];
 
 export const QUESTION_BANK = {
@@ -410,28 +412,50 @@ export const NOVI_LINES = {
   personalBest: "NEW PERSONAL BEST!",
 };
 
+// Skill dimension labels change per career domain so the dashboard/report
+// never shows a CS-flavored skill name to a non-CS student. Internal ids
+// (technical/communication/problemSolving/confidence) stay stable so the
+// rest of the app (scores, roadmaps, history) doesn't need to change shape.
+export const DOMAIN_SKILL_LABELS = {
+  Technical: { technical: "Technical Knowledge", communication: "Communication", problemSolving: "Problem Solving", confidence: "Confidence" },
+  Engineering: { technical: "Technical Knowledge", communication: "Communication", problemSolving: "Problem Solving", confidence: "Confidence" },
+  Business: { technical: "Business Knowledge", communication: "Communication", problemSolving: "Business Thinking", confidence: "Confidence" },
+  Finance: { technical: "Finance Knowledge", communication: "Communication", problemSolving: "Analytical Thinking", confidence: "Confidence" },
+  Science: { technical: "Domain Knowledge", communication: "Communication", problemSolving: "Analytical Thinking", confidence: "Confidence" },
+  Arts: { technical: "Domain Knowledge", communication: "Communication", problemSolving: "Critical Thinking", confidence: "Confidence" },
+  Design: { technical: "Design Thinking", communication: "Communication", problemSolving: "Creativity", confidence: "Confidence" },
+  Law: { technical: "Legal Knowledge", communication: "Communication", problemSolving: "Analytical Thinking", confidence: "Confidence" },
+  Medical: { technical: "Clinical Knowledge", communication: "Communication", problemSolving: "Clinical Judgment", confidence: "Confidence" },
+  Hospitality: { technical: "Service Knowledge", communication: "Communication", problemSolving: "Problem Solving", confidence: "Confidence" },
+  Education: { technical: "Subject Knowledge", communication: "Communication", problemSolving: "Classroom Judgment", confidence: "Confidence" },
+  General: { technical: "Domain Knowledge", communication: "Communication", problemSolving: "Problem Solving", confidence: "Confidence" },
+};
+
+export function getSkillLabels(domain) {
+  return DOMAIN_SKILL_LABELS[domain] || DOMAIN_SKILL_LABELS.General;
+}
+
 // Skill detail panels — opened by clicking a skill card on the dashboard.
-// Roadmap templates are keyed by skill; the problem statement is picked by
-// score tier rather than generated, which keeps this reliable offline.
+// Keyed by stable id. "communication" and "confidence" generalize fine
+// across domains as-is; "technical" and "problemSolving" get a per-domain
+// override below since their meaning shifts the most between careers.
 export const SKILL_ROADMAPS = {
-  "Technical Knowledge": {
-    interviewType: "Technical",
-    whyItMatters: "Technical depth is what tells an interviewer you can actually do the job, not just talk about it.",
+  technical: {
+    whyItMatters: "Domain depth is what tells an interviewer you can actually do the job, not just talk about it.",
     problemByTier: {
-      low: "Your answers touch the right ideas but often miss the underlying mechanism — interviewers want the 'why', not just the 'what'.",
-      mid: "You're technically correct most of the time, but answers could go one level deeper into trade-offs and edge cases.",
-      high: "Strong technical grounding — the next gain is speaking about complexity and scale considerations even when not asked.",
+      low: "Your answers touch the right ideas but often miss the underlying reasoning — interviewers want the 'why', not just the 'what'.",
+      mid: "You're mostly accurate, but answers could go one level deeper into trade-offs and specifics.",
+      high: "Strong grounding — the next gain is speaking about scale/impact considerations even when not asked.",
     },
     roadmap: [
-      { title: "Fundamentals Refresh", detail: "Revisit core concepts in your weakest topic area until you can explain them without notes." },
+      { title: "Fundamentals Refresh", detail: "Revisit core concepts in your weakest area until you can explain them without notes." },
       { title: "Depth Over Breadth", detail: "For every answer, add one sentence on the 'why' — not just the 'what'." },
       { title: "Trade-off Framing", detail: "Practice naming at least one trade-off or alternative approach per answer." },
-      { title: "Mock Practice", detail: "Complete 3 technical-focused interviews to reinforce the pattern." },
+      { title: "Mock Practice", detail: "Complete 3 focused interviews to reinforce the pattern." },
       { title: "Reassess", detail: "Take another interview and track whether your depth score improved." },
     ],
   },
-  Communication: {
-    interviewType: "HR",
+  communication: {
     whyItMatters: "Good communication helps interviewers quickly understand your reasoning and experience.",
     problemByTier: {
       low: "Your answers are generally relevant, but some responses are too long and lack a clear structure.",
@@ -446,24 +470,22 @@ export const SKILL_ROADMAPS = {
       { title: "Reassess", detail: "Take another interview and track improvement." },
     ],
   },
-  "Problem Solving": {
-    interviewType: "Technical",
+  problemSolving: {
     whyItMatters: "Interviewers care as much about how you approach an unfamiliar problem as whether you land the exact answer.",
     problemByTier: {
-      low: "You tend to jump to a solution before fully framing the problem, which can lead to missed edge cases.",
-      mid: "Your approach is solid, but talking through your brute-force idea before optimizing would show more of your reasoning.",
+      low: "You tend to jump to a conclusion before fully framing the problem, which can lead to missed considerations.",
+      mid: "Your approach is solid, but talking through your reasoning before concluding would show more of your thinking.",
       high: "Strong problem-solving instincts — the next gain is narrating your thought process out loud as you go.",
     },
     roadmap: [
-      { title: "Clarify First", detail: "Restate the problem and ask a clarifying question before answering." },
-      { title: "Brute Force, Then Optimize", detail: "State the naive solution first, then improve on it out loud." },
-      { title: "Edge Cases", detail: "Name at least one edge case per problem before finishing." },
+      { title: "Clarify First", detail: "Restate the problem and name the goal before answering." },
+      { title: "Structure the Approach", detail: "Lay out your reasoning step by step before landing on an answer." },
+      { title: "Name Trade-offs", detail: "Mention at least one alternative you considered before finishing." },
       { title: "Mock Practice", detail: "Complete 3 problem-solving-focused interviews." },
       { title: "Reassess", detail: "Take another interview and track improvement." },
     ],
   },
-  Confidence: {
-    interviewType: "HR",
+  confidence: {
     whyItMatters: "Confidence affects how convincing your answers sound, independent of how good the underlying content is.",
     problemByTier: {
       low: "Your answers are often hedged or trail off — stating your point directly will land much stronger.",
@@ -480,12 +502,118 @@ export const SKILL_ROADMAPS = {
   },
 };
 
-export function getSkillDetail(skillName, currentScore) {
-  const roadmap = SKILL_ROADMAPS[skillName];
+// Domain-specific overrides for the two skills whose content is most
+// domain-dependent. Falls back to the generic SKILL_ROADMAPS above when a
+// domain has no override — still correct, just less flavored.
+export const DOMAIN_SKILL_OVERRIDES = {
+  Business: {
+    technical: {
+      whyItMatters: "Business knowledge shows you connect decisions to real outcomes — revenue, users, cost or retention — not just activity.",
+      problemByTier: {
+        low: "Your answers describe activities but don't connect them to a business outcome.",
+        mid: "You understand the context, but could go deeper into the trade-offs between options.",
+        high: "Strong business grounding — the next gain is quantifying impact with numbers even when not asked.",
+      },
+      roadmap: [
+        { title: "Connect to Outcomes", detail: "Tie every answer back to a metric — revenue, users, cost or retention." },
+        { title: "Know the Fundamentals", detail: "Revisit core concepts: positioning, segmentation, funnels, unit economics." },
+        { title: "Trade-off Framing", detail: "Name the option you didn't choose and why." },
+        { title: "Mock Practice", detail: "Complete 3 business/case-focused interviews." },
+        { title: "Reassess", detail: "Take another interview and track improvement." },
+      ],
+    },
+    problemSolving: {
+      whyItMatters: "Business thinking shows you can structure an ambiguous problem the way a real strategy discussion would.",
+      problemByTier: {
+        low: "You tend to jump to a solution before framing the problem — the goal, the audience, the constraint.",
+        mid: "Your structure is solid, but naming 2-3 options before picking one would show more range.",
+        high: "Strong structured thinking — the next gain is explicitly prioritizing what matters most, and why.",
+      },
+      roadmap: [
+        { title: "Frame First", detail: "State the goal and constraint before proposing a solution." },
+        { title: "Generate Options", detail: "Name at least two approaches before picking one." },
+        { title: "Prioritize", detail: "Explicitly say what you'd do first and why." },
+        { title: "Mock Practice", detail: "Complete 3 case-style interviews." },
+        { title: "Reassess", detail: "Take another interview and track improvement." },
+      ],
+    },
+  },
+  Finance: {
+    technical: {
+      whyItMatters: "Finance knowledge shows you can reason about numbers, risk and value the way the role actually requires.",
+      problemByTier: {
+        low: "You name the right concepts but don't yet connect them to a number or a decision.",
+        mid: "You're mostly accurate — go further by stating the actual metric or figure you'd look at.",
+        high: "Strong technical grounding — the next gain is discussing risk and assumptions explicitly.",
+      },
+      roadmap: [
+        { title: "Ground in Numbers", detail: "Reference a specific metric or ratio in every answer." },
+        { title: "Core Concepts", detail: "Revisit fundamentals: statements, valuation, risk, time value of money." },
+        { title: "State Assumptions", detail: "Say what you're assuming out loud before concluding." },
+        { title: "Mock Practice", detail: "Complete 3 finance-focused interviews." },
+        { title: "Reassess", detail: "Take another interview and track improvement." },
+      ],
+    },
+    problemSolving: {
+      whyItMatters: "Analytical thinking shows you can break down a numerical or ambiguous problem methodically.",
+      problemByTier: {
+        low: "You reach a conclusion quickly without showing the steps that got you there.",
+        mid: "Your logic is sound — narrate it more explicitly, step by step.",
+        high: "Strong analytical rigor — the next gain is sanity-checking your answer out loud.",
+      },
+      roadmap: [
+        { title: "Show Your Work", detail: "Narrate each step of your reasoning, not just the conclusion." },
+        { title: "Sanity Check", detail: "State whether your answer feels reasonable and why." },
+        { title: "Consider Risk", detail: "Name one thing that could make your answer wrong." },
+        { title: "Mock Practice", detail: "Complete 3 analytical case interviews." },
+        { title: "Reassess", detail: "Take another interview and track improvement." },
+      ],
+    },
+  },
+  Design: {
+    technical: {
+      whyItMatters: "Design thinking shows you can reason from a user problem to a decision, not just describe a nice-looking output.",
+      problemByTier: {
+        low: "You describe the output but not the user problem it solves.",
+        mid: "You reference the user, but could justify decisions with more specific reasoning.",
+        high: "Strong design reasoning — the next gain is discussing trade-offs with constraints explicitly.",
+      },
+      roadmap: [
+        { title: "Start With the Problem", detail: "State the user need before describing the solution." },
+        { title: "Justify Decisions", detail: "Explain why, not just what — for every design choice." },
+        { title: "Reference Process", detail: "Mention research, iteration, or feedback that shaped the outcome." },
+        { title: "Mock Practice", detail: "Complete 3 portfolio/case-style interviews." },
+        { title: "Reassess", detail: "Take another interview and track improvement." },
+      ],
+    },
+    problemSolving: {
+      whyItMatters: "Creativity shows you can generate and evaluate multiple design directions, not settle on the first idea.",
+      problemByTier: {
+        low: "You tend to present one idea without showing alternatives you considered.",
+        mid: "You show some range — go further by explaining why you rejected other directions.",
+        high: "Strong creative range — the next gain is tying the chosen idea back to constraints explicitly.",
+      },
+      roadmap: [
+        { title: "Generate Options", detail: "Mention at least two directions before settling on one." },
+        { title: "Explain Rejections", detail: "Say why you didn't go with the other option." },
+        { title: "Tie to Constraints", detail: "Connect your final choice back to a real constraint (time, tech, user)." },
+        { title: "Mock Practice", detail: "Complete 3 creative problem-solving interviews." },
+        { title: "Reassess", detail: "Take another interview and track improvement." },
+      ],
+    },
+  },
+};
+
+export function getSkillDetail(skillId, currentScore, domain) {
+  const base = SKILL_ROADMAPS[skillId];
+  const override = DOMAIN_SKILL_OVERRIDES[domain]?.[skillId];
+  const roadmap = override || base;
   const tier = currentScore >= 85 ? "high" : currentScore >= 70 ? "mid" : "low";
   const target = Math.min(98, currentScore + (tier === "high" ? 6 : tier === "mid" ? 11 : 16));
+  const labels = getSkillLabels(domain);
   return {
     ...roadmap,
+    label: labels[skillId],
     problem: roadmap.problemByTier[tier],
     target,
   };
@@ -501,21 +629,76 @@ function jitter(base, spread) {
   return base + (Math.random() * 2 - 1) * spread;
 }
 
+// Behavioral questions (from QUESTION_BANK.HR) are checked for STAR
+// structure — Situation, Task, Action, Result — via keyword heuristics.
+// Not true NLP, but it reads the actual answer instead of guessing.
+const HR_TOPICS = new Set([
+  "Introduction", "Motivation", "Teamwork", "Conflict Resolution", "Leadership",
+  "Failure", "Pressure Handling", "Difficult Stakeholders", "Ethical Judgment",
+]);
+
+export function isBehavioralTopic(topic) {
+  return HR_TOPICS.has(topic);
+}
+
+const STAR_PATTERNS = {
+  situation: /\b(when|during|while|at (my|the)|in (my|a) (previous|last|recent)|situation|context|background)\b/i,
+  task: /\b(needed to|had to|was responsible|my (role|task|goal) was|goal was to|objective was)\b/i,
+  action: /\bI (built|created|implemented|led|organized|decided|designed|analyzed|proposed|fixed|wrote|managed|coordinated|resolved|developed|launched|negotiated|presented|escalated|prioritized|reduced|increased|improved|delivered|reached out)\b/i,
+  result: /\b(result(ed)?( in)?|as a result|which led to|increased|decreased|reduced|improved|successfully|outcome|we (achieved|delivered|shipped)|\d+%|percent)\b/i,
+};
+
+export function analyzeStar(answerText) {
+  return {
+    situation: STAR_PATTERNS.situation.test(answerText),
+    task: STAR_PATTERNS.task.test(answerText),
+    action: STAR_PATTERNS.action.test(answerText),
+    result: STAR_PATTERNS.result.test(answerText),
+  };
+}
+
+export const STAR_LABELS = { situation: "Situation", task: "Task", action: "Action", result: "Result" };
+
+function starTip(star) {
+  const missing = Object.entries(star).filter(([, present]) => !present).map(([key]) => key);
+  if (missing.length === 0) {
+    return "Great STAR structure — every part is there. Tighten the wording and this is interview-ready.";
+  }
+  const first = missing[0];
+  const messages = {
+    situation: "Set the scene first — briefly say when/where this happened before jumping into what you did.",
+    task: "Name what you were specifically responsible for, not just what happened around you.",
+    action: "Say what YOU did, using 'I' statements — right now it reads like something happened, not something you drove.",
+    result: "End with a measurable result or what changed because of your action — that's the part that's missing.",
+  };
+  return messages[first];
+}
+
 // Mock "AI scoring" of a free-text answer — biased by length/effort so the
 // demo feels responsive to real input while staying reliable offline.
-export function generateFeedback(answerText, coachStyle = "Friendly") {
+// `context` optionally carries { topic, isBehavioral } for a small dose of
+// question-aware analysis instead of pure generic scoring.
+export function generateFeedback(answerText, coachStyle = "Friendly", context = {}) {
   const words = answerText.trim().split(/\s+/).filter(Boolean).length;
   const lengthScore = clamp(3 + words / 9, 3, 9.5);
 
   const technical = clamp(jitter(lengthScore, 1.2), 1, 10);
   const relevance = clamp(jitter(lengthScore, 1), 1, 10);
-  const clarity = clamp(jitter(lengthScore, 1.3), 1, 10);
+  let clarity = clamp(jitter(lengthScore, 1.3), 1, 10);
   const confidence = clamp(jitter(lengthScore, 1.5), 1, 10);
+
+  let star = null;
+  if (context.isBehavioral) {
+    star = analyzeStar(answerText);
+    const completeness = Object.values(star).filter(Boolean).length / 4;
+    const structureScore = clamp(3 + completeness * 7, 1, 10);
+    clarity = clamp((clarity + structureScore) / 2, 1, 10);
+  }
 
   const avg = (technical + relevance + clarity + confidence) / 4;
   const bucket = scoreLabel(avg);
   const tips = (COACH_TIPS_BY_STYLE[coachStyle] || COACH_TIPS_BY_STYLE.Friendly)[bucket];
-  const tip = tips[Math.floor(Math.random() * tips.length)];
+  const tip = star ? starTip(star) : tips[Math.floor(Math.random() * tips.length)];
 
   return {
     technical: Math.round(technical * 10) / 10,
@@ -524,6 +707,7 @@ export function generateFeedback(answerText, coachStyle = "Friendly") {
     confidence: Math.round(confidence * 10) / 10,
     average: Math.round(avg * 10) / 10,
     tip,
+    star,
   };
 }
 
@@ -584,6 +768,7 @@ export const INTERVIEW_HISTORY = [
     id: "h1",
     role: "Software Engineer",
     type: "Technical",
+    domain: "Technical",
     overallScore: 82,
     technical: 86,
     communication: 74,
@@ -608,6 +793,7 @@ export const INTERVIEW_HISTORY = [
     id: "h2",
     role: "Software Engineer",
     type: "Mixed",
+    domain: "Technical",
     overallScore: 74,
     technical: 79,
     communication: 68,
@@ -634,10 +820,13 @@ export function buildReport(sessionQuestions, config) {
   const scores = sessionQuestions.map((q) => q.score);
   const overall = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
   const teachMeCount = sessionQuestions.filter((q) => q.taught).length;
+  const domain = domainForCategory(config?.categoryKey);
+  const labels = getSkillLabels(domain);
 
   return {
-    role: config?.role || "Software Engineer",
+    role: config?.role || "Candidate",
     type: config?.type || "Technical",
+    domain,
     overallScore: clampScore(overall),
     technical: clampScore(overall + 4),
     communication: clampScore(overall - 8),
@@ -646,10 +835,9 @@ export function buildReport(sessionQuestions, config) {
     questions: sessionQuestions,
     teachMeCount,
     duration: `${sessionQuestions.length * 2} min`,
-    strengths: pickStrengths(overall),
-    improvements: pickImprovements(overall),
-    recommendation:
-      "Focus on structuring behavioral answers using STAR and keep technical explanations concise.",
+    strengths: pickStrengths(overall, domain),
+    improvements: pickImprovements(overall, domain),
+    recommendation: `Focus on structuring behavioral answers using STAR and keep ${labels.technical.toLowerCase()} explanations concise.`,
   };
 }
 
@@ -657,24 +845,26 @@ function clampScore(n) {
   return Math.max(35, Math.min(98, n));
 }
 
-function pickStrengths(overall) {
+function pickStrengths(overall, domain) {
+  const labels = getSkillLabels(domain);
   const all = [
-    "Strong technical fundamentals",
+    `Strong ${labels.technical.toLowerCase()}`,
     "Good relevance to questions",
-    "Good problem-solving approach",
+    `Good ${labels.problemSolving.toLowerCase()}`,
     "Clear and structured communication",
     "Handled harder follow-ups well",
   ];
   return overall >= 70 ? all.slice(0, 3) : all.slice(2, 5);
 }
 
-function pickImprovements(overall) {
+function pickImprovements(overall, domain) {
+  const labels = getSkillLabels(domain);
   const all = [
     "Keep answers more concise",
     "Use stronger STAR structure",
     "Provide more concrete examples",
     "Slow down and structure thoughts before answering",
-    "Dig deeper into core fundamentals",
+    `Dig deeper into core ${labels.technical.toLowerCase()}`,
   ];
   return overall >= 70 ? all.slice(0, 3) : all.slice(2, 5);
 }

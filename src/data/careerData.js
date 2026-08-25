@@ -166,3 +166,39 @@ export function domainForCategory(categoryKey) {
   };
   return map[categoryKey] || "General";
 }
+
+// Interview Type card copy, keyed by domain. The underlying `key` values
+// (Technical/HR/Mixed) stay stable — only the label/description shown to
+// the user changes — so a Marketing student never sees "DSA & core CS".
+const INTERVIEW_TYPE_META = {
+  Technical: { Technical: ["Technical", "DSA, system design & core CS"], HR: ["HR", "Behavioral & culture-fit questions"], Mixed: ["Mixed", "A blend of both"] },
+  Engineering: { Technical: ["Technical", "Core engineering concepts & problem solving"], HR: ["HR", "Behavioral & culture-fit questions"], Mixed: ["Mixed", "A blend of both"] },
+  Business: { Technical: ["Business", "Business, marketing & case questions"], HR: ["Behavioral", "Behavioral & culture-fit questions"], Mixed: ["Mixed", "A blend of both"] },
+  Finance: { Technical: ["Finance", "Finance & analytical case questions"], HR: ["Behavioral", "Behavioral & culture-fit questions"], Mixed: ["Mixed", "A blend of both"] },
+  Science: { Technical: ["Domain", "Core scientific/domain questions"], HR: ["Behavioral", "Behavioral & culture-fit questions"], Mixed: ["Mixed", "A blend of both"] },
+  Arts: { Technical: ["Domain", "Writing, media & domain questions"], HR: ["Behavioral", "Behavioral & culture-fit questions"], Mixed: ["Mixed", "A blend of both"] },
+  Design: { Technical: ["Portfolio", "Design thinking & case questions"], HR: ["Behavioral", "Behavioral & culture-fit questions"], Mixed: ["Mixed", "A blend of both"] },
+  Law: { Technical: ["Legal", "Legal knowledge & case questions"], HR: ["Behavioral", "Behavioral & culture-fit questions"], Mixed: ["Mixed", "A blend of both"] },
+  Medical: { Technical: ["Clinical", "Clinical knowledge & scenario questions"], HR: ["Behavioral", "Behavioral & culture-fit questions"], Mixed: ["Mixed", "A blend of both"] },
+  Hospitality: { Technical: ["Operations", "Service & operations scenarios"], HR: ["Behavioral", "Behavioral & culture-fit questions"], Mixed: ["Mixed", "A blend of both"] },
+  Education: { Technical: ["Subject", "Subject knowledge & classroom scenarios"], HR: ["Behavioral", "Behavioral & culture-fit questions"], Mixed: ["Mixed", "A blend of both"] },
+  General: { Technical: ["Practice", "General role-relevant questions"], HR: ["Behavioral", "Behavioral & culture-fit questions"], Mixed: ["Mixed", "A blend of both"] },
+};
+
+export function getInterviewTypeOptions(domain) {
+  const meta = INTERVIEW_TYPE_META[domain] || INTERVIEW_TYPE_META.General;
+  return ["Technical", "HR", "Mixed"].map((key) => ({
+    key,
+    label: meta[key][0],
+    desc: meta[key][1],
+  }));
+}
+
+// Which interview type best exercises a given skill id — used when a user
+// clicks "Practice X" from a skill roadmap so Setup pre-selects sensibly.
+export const SKILL_ID_TO_INTERVIEW_TYPE = {
+  technical: "Technical",
+  problemSolving: "Technical",
+  communication: "HR",
+  confidence: "HR",
+};

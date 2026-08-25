@@ -7,6 +7,8 @@ import {
   pickQuestion,
   scoreLabel,
   getTeachMeContent,
+  isBehavioralTopic,
+  STAR_LABELS,
   NOVI_LINES,
   INTERVIEWER_FOLLOWUPS,
 } from "../data/mockData.js";
@@ -65,7 +67,10 @@ export default function Interview({ config, domain, totalQuestions, onFinish }) 
   function handleSubmit(e) {
     e.preventDefault();
     if (!answer.trim()) return;
-    const fb = generateFeedback(answer, coachStyle);
+    const fb = generateFeedback(answer, coachStyle, {
+      isBehavioral: isBehavioralTopic(question.topic),
+      topic: question.topic,
+    });
     setFeedback(fb);
 
     const bucket = scoreLabel(fb.average);
@@ -180,6 +185,8 @@ export default function Interview({ config, domain, totalQuestions, onFinish }) 
               <Novi size="sm" pose={noviPose} message={noviLine} />
             </div>
 
+            {feedback.star && <StarChecklist star={feedback.star} />}
+
             <div className="fb-summary">
               {summary.well.length > 0 && (
                 <div className="fb-block fb-well">
@@ -264,6 +271,8 @@ export default function Interview({ config, domain, totalQuestions, onFinish }) 
             </div>
             <Novi size="sm" pose="celebrate" message={NOVI_LINES.teachMeRetry} />
 
+            {feedback.star && <StarChecklist star={feedback.star} />}
+
             <div className="feedback-scores">
               <ScoreItem label="Technical Accuracy" value={feedback.technical} />
               <ScoreItem label="Relevance" value={feedback.relevance} />
@@ -276,6 +285,25 @@ export default function Interview({ config, domain, totalQuestions, onFinish }) 
             </button>
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+function StarChecklist({ star }) {
+  const structureScore = Math.round((Object.values(star).filter(Boolean).length / 4) * 10);
+  return (
+    <div className="star-checklist">
+      <div className="star-checklist-top">
+        <span>STRUCTURE</span>
+        <span>{structureScore}/10</span>
+      </div>
+      <div className="star-items">
+        {Object.entries(STAR_LABELS).map(([key, label]) => (
+          <span key={key} className={`star-item ${star[key] ? "star-present" : "star-missing"}`}>
+            {star[key] ? "✓" : "✗"} {label}
+          </span>
+        ))}
       </div>
     </div>
   );

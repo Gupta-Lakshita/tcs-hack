@@ -1,5 +1,5 @@
 import Novi from "../components/Novi.jsx";
-import { NOVI_LINES } from "../data/mockData.js";
+import { NOVI_LINES, getSkillLabels } from "../data/mockData.js";
 import { useCountUp } from "../hooks/useCountUp.js";
 import "./Report.css";
 
@@ -8,6 +8,7 @@ export default function Report({ report, onPracticeAgain, onBackToDashboard }) {
   const scoreCount = useCountUp(report.overallScore);
   const noviPose = report.isPersonalBest ? "personalBest" : "celebrate";
   const noviMsg = report.isPersonalBest ? NOVI_LINES.personalBest : report.overallScore >= 80 ? NOVI_LINES.celebrate : NOVI_LINES.celebrateSolid;
+  const labels = getSkillLabels(report.domain);
 
   return (
     <div className="report-wrap">
@@ -23,13 +24,13 @@ export default function Report({ report, onPracticeAgain, onBackToDashboard }) {
         <div className="overall-block">
           <span className="overall-score gradient-text">{scoreCount}</span>
           <span className="overall-max">/ 100</span>
-          <span className="overall-label">Interview Readiness</span>
+          <span className="overall-label">{report.role} Readiness</span>
         </div>
         <div className="skill-cards">
-          <SkillCard label="Technical Knowledge" value={report.technical} tone="lavender" />
-          <SkillCard label="Communication" value={report.communication} tone="mint" />
-          <SkillCard label="Problem Solving" value={report.problemSolving} tone="peach" />
-          <SkillCard label="Confidence" value={report.confidence} tone="powder" />
+          <SkillCard label={labels.technical} value={report.technical} tone="lavender" />
+          <SkillCard label={labels.communication} value={report.communication} tone="mint" />
+          <SkillCard label={labels.problemSolving} value={report.problemSolving} tone="peach" />
+          <SkillCard label={labels.confidence} value={report.confidence} tone="powder" />
         </div>
       </section>
 

@@ -2,7 +2,7 @@ import { useState } from "react";
 import Novi from "../components/Novi.jsx";
 import LineChart from "../components/LineChart.jsx";
 import SkillModal from "../components/SkillModal.jsx";
-import { NOVI_LINES } from "../data/mockData.js";
+import { NOVI_LINES, getSkillLabels } from "../data/mockData.js";
 import { useCountUp } from "../hooks/useCountUp.js";
 import "./Dashboard.css";
 
@@ -23,25 +23,28 @@ function greetingWord() {
 export default function Dashboard({ trend, history, onStartPractice, onPracticeSkill, onViewHistoryItem, onViewAllHistory }) {
   const [selectedSkill, setSelectedSkill] = useState(null);
   const latest = history[0];
+  const domain = latest.domain || "Technical";
+  const labels = getSkillLabels(domain);
   const firstScore = trend[0].score;
   const pointsGainedTotal = Math.max(0, trend[trend.length - 1].score - firstScore);
   const readinessLabel = latest.role ? `${latest.role} Readiness` : "Interview Readiness";
   const readinessCount = useCountUp(latest.overallScore);
 
   const skillScores = {
-    "Technical Knowledge": latest.technical,
-    Communication: latest.communication,
-    "Problem Solving": latest.problemSolving,
-    Confidence: latest.confidence,
+    technical: latest.technical,
+    communication: latest.communication,
+    problemSolving: latest.problemSolving,
+    confidence: latest.confidence,
   };
 
   const weakestEntry = Object.entries(skillScores).sort((a, b) => a[1] - b[1])[0];
-  const [weakestSkill, weakestScore] = weakestEntry;
+  const [weakestId, weakestScore] = weakestEntry;
+  const weakestLabel = labels[weakestId];
 
   const insight =
     weakestScore >= 82
       ? "You're well-rounded across every skill area — keep the streak going with another round."
-      : `Your ${weakestSkill.toLowerCase()} is your biggest opportunity right now. One more focused session this week could push your readiness higher.`;
+      : `Your ${weakestLabel.toLowerCase()} is your biggest opportunity right now. One more focused session this week could push your readiness higher.`;
 
   const today = new Date();
 
@@ -67,13 +70,13 @@ export default function Dashboard({ trend, history, onStartPractice, onPracticeS
               <span className="overall-sub">+{pointsGainedTotal} points since your first interview</span>
             </div>
             <div className="dash-skill-cards">
-              {Object.entries(skillScores).map(([label, value], i) => (
+              {Object.entries(skillScores).map(([id, value], i) => (
                 <SkillCard
-                  key={label}
-                  label={label}
+                  key={id}
+                  label={labels[id]}
                   value={value}
                   tone={["lavender", "mint", "peach", "powder"][i]}
-                  onClick={() => setSelectedSkill(label)}
+                  onClick={() => setSelectedSkill(id)}
                 />
               ))}
             </div>
@@ -128,10 +131,10 @@ export default function Dashboard({ trend, history, onStartPractice, onPracticeS
         <div className="dash-side">
           <section className="card focus-card stagger" style={{ "--d": "40ms" }}>
             <span className="focus-eyebrow">Today's Focus</span>
-            <h3 className="focus-title">{weakestSkill}</h3>
+            <h3 className="focus-title">{weakestLabel}</h3>
             <span className="focus-duration">15 min</span>
             <p className="focus-copy">Practice concise, structured answers to sharpen this skill.</p>
-            <button className="btn btn-primary focus-btn" onClick={() => onPracticeSkill(weakestSkill)}>
+            <button className="btn btn-primary focus-btn" onClick={() => onPracticeSkill(weakestId)}>
               Start Practice
             </button>
             <Novi pose="encourage" size="sm" message={NOVI_LINES.focusNudge} />
@@ -165,7 +168,7 @@ export default function Dashboard({ trend, history, onStartPractice, onPracticeS
           <section className="card upcoming-card stagger" style={{ "--d": "200ms" }}>
             <span className="section-title">Upcoming</span>
             <h3 className="upcoming-role">{latest.role}</h3>
-            <span className="upcoming-type">Behavioral + Case</span>
+            <span className="upcoming-type">{latest.type} Interview</span>
             <span className="upcoming-time">Friday, 5:30 PM</span>
             <div className="upcoming-prep">
               <div className="upcoming-prep-top">
@@ -185,12 +188,13 @@ export default function Dashboard({ trend, history, onStartPractice, onPracticeS
 
       {selectedSkill && (
         <SkillModal
-          skillName={selectedSkill}
+          skillId={selectedSkill}
+          domain={domain}
           score={skillScores[selectedSkill]}
           onClose={() => setSelectedSkill(null)}
-          onPractice={(skill) => {
+          onPractice={(id) => {
             setSelectedSkill(null);
-            onPracticeSkill(skill);
+            onPracticeSkill(id);
           }}
         />
       )}

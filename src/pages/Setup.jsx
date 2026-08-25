@@ -1,15 +1,12 @@
 import { useState } from "react";
-import { COACH_STYLES, SKILL_ROADMAPS, TIMER_OPTIONS } from "../data/mockData.js";
+import { COACH_STYLES, TIMER_OPTIONS, getSkillLabels } from "../data/mockData.js";
+import { getInterviewTypeOptions, SKILL_ID_TO_INTERVIEW_TYPE } from "../data/careerData.js";
 import "./Setup.css";
 
-const INTERVIEW_TYPES = [
-  { key: "Technical", desc: "DSA, system design & core CS" },
-  { key: "HR", desc: "Behavioral & culture-fit questions" },
-  { key: "Mixed", desc: "A blend of both" },
-];
-
-export default function Setup({ pathInfo, focusSkill, onContinue }) {
-  const [type, setType] = useState(focusSkill ? SKILL_ROADMAPS[focusSkill]?.interviewType || "Technical" : "Technical");
+export default function Setup({ pathInfo, domain, focusSkill, onContinue }) {
+  const INTERVIEW_TYPES = getInterviewTypeOptions(domain);
+  const labels = getSkillLabels(domain);
+  const [type, setType] = useState(focusSkill ? SKILL_ID_TO_INTERVIEW_TYPE[focusSkill] || "Technical" : "Technical");
   const [coach, setCoach] = useState("Friendly");
   const [timerEnabled, setTimerEnabled] = useState(false);
   const [timerSeconds, setTimerSeconds] = useState(60);
@@ -47,7 +44,7 @@ export default function Setup({ pathInfo, focusSkill, onContinue }) {
 
       {focusSkill && (
         <div className="focus-banner">
-          Focused on <strong>{focusSkill}</strong> — questions and coaching will lean toward this skill.
+          Focused on <strong>{labels[focusSkill]}</strong> — questions and coaching will lean toward this skill.
         </div>
       )}
 
@@ -62,7 +59,7 @@ export default function Setup({ pathInfo, focusSkill, onContinue }) {
                 className={`type-option ${type === t.key ? "selected" : ""}`}
                 onClick={() => setType(t.key)}
               >
-                <span className="type-name">{t.key}</span>
+                <span className="type-name">{t.label}</span>
                 <span className="type-desc">{t.desc}</span>
               </button>
             ))}
