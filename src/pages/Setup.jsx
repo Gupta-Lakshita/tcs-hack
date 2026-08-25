@@ -7,9 +7,12 @@ const INTERVIEW_TYPES = [
   { key: "Mixed", desc: "A blend of both" },
 ];
 
-export default function Setup({ onStart }) {
+const DIFFICULTY_PREFS = ["Adaptive", "Easy", "Medium", "Hard"];
+
+export default function Setup({ onContinue }) {
   const [type, setType] = useState("Technical");
   const [role, setRole] = useState("");
+  const [difficultyPref, setDifficultyPref] = useState("Adaptive");
   const [resumeName, setResumeName] = useState("");
 
   function handleFile(e) {
@@ -19,22 +22,36 @@ export default function Setup({ onStart }) {
 
   function handleSubmit(e) {
     e.preventDefault();
-    onStart({ type, role: role.trim() || "Software Engineer", resumeName });
+    onContinue({
+      type,
+      role: role.trim() || "Software Engineer",
+      difficultyPref,
+      resumeName,
+    });
   }
 
   return (
-    <div>
-      <div className="hero-copy">
-        <span className="eyebrow">AI-Powered Adaptive Interviewer</span>
-        <h1>Practice. Adapt. Improve.</h1>
-        <p className="tagline">
-          A personalized interview simulator that reads your answers and reacts like a real
-          interviewer &mdash; getting harder when you shine, and refocusing on fundamentals when
-          you don&apos;t.
-        </p>
+    <div className="page-narrow">
+      <div className="setup-header">
+        <span className="eyebrow">Interview Setup</span>
+        <h1>Let's set up your practice round.</h1>
       </div>
 
       <form className="card setup-card" onSubmit={handleSubmit}>
+        <div className="field-group">
+          <label className="field-label" htmlFor="role">
+            Target Role
+          </label>
+          <input
+            id="role"
+            className="text-input"
+            type="text"
+            placeholder="e.g. Software Engineer, Data Analyst, SDE-1"
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+          />
+        </div>
+
         <div className="field-group">
           <label className="field-label">Interview Type</label>
           <div className="type-grid">
@@ -53,22 +70,27 @@ export default function Setup({ onStart }) {
         </div>
 
         <div className="field-group">
-          <label className="field-label" htmlFor="role">
-            Target Role / Domain
-          </label>
-          <input
-            id="role"
-            className="text-input"
-            type="text"
-            placeholder="e.g. Frontend Engineer, Data Analyst, SDE-1"
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-          />
+          <label className="field-label">Difficulty Preference</label>
+          <div className="chip-row">
+            {DIFFICULTY_PREFS.map((d) => (
+              <button
+                type="button"
+                key={d}
+                className={`chip ${difficultyPref === d ? "selected" : ""}`}
+                onClick={() => setDifficultyPref(d)}
+              >
+                {d}
+              </button>
+            ))}
+          </div>
+          {difficultyPref === "Adaptive" && (
+            <span className="field-hint">Recommended — questions adjust to how you're performing.</span>
+          )}
         </div>
 
         <div className="field-group">
           <label className="field-label" htmlFor="resume">
-            Resume Upload <span className="optional">(optional)</span>
+            Resume <span className="optional">(optional — personalizes your questions)</span>
           </label>
           <label className="upload-box" htmlFor="resume">
             <span className="upload-icon">&#8593;</span>
@@ -84,7 +106,7 @@ export default function Setup({ onStart }) {
         </div>
 
         <button type="submit" className="btn btn-primary start-btn">
-          Start Interview &rarr;
+          Continue →
         </button>
       </form>
     </div>

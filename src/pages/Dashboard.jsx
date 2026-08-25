@@ -1,98 +1,97 @@
-import { FALLBACK_REPORT } from "../data/mockData.js";
+import Companion from "../components/Companion.jsx";
+import { COMPANION_LINES } from "../data/mockData.js";
 import "./Dashboard.css";
 
-export default function Dashboard({ report, onPracticeAgain, onNewInterview }) {
-  const data = report || FALLBACK_REPORT;
-  const maxScore = Math.max(...data.questions.map((q) => q.score));
+export default function Dashboard({ trend, history, onStartPractice, onViewHistoryItem, onViewAllHistory }) {
+  const latest = history[0];
+  const maxTrend = Math.max(...trend.map((t) => t.score));
+  const compareIdx = Math.max(0, trend.length - 4);
+  const pointsGained = Math.max(0, trend[trend.length - 1].score - trend[compareIdx].score);
 
   return (
-    <div className="dashboard-wrap">
-      <div className="dash-header">
-        <h1>Interview Performance</h1>
-        <p className="tagline">Your AI-generated interview readiness report.</p>
+    <div className="dashboard">
+      <div className="dash-greeting">
+        <div>
+          <h1>Good to see you.</h1>
+          <p className="tagline">Let's see how your interview skills are growing.</p>
+        </div>
+        <button className="btn btn-primary" onClick={onStartPractice}>
+          Start Practice →
+        </button>
       </div>
+
+      <Companion
+        mood="happy"
+        size="sm"
+        message={history.length > 2 ? COMPANION_LINES.dashboardReturning : COMPANION_LINES.dashboardFirstTime}
+      />
 
       <section className="card hero-section">
         <div className="overall-block">
-          <span className="overall-score">{data.overallScore}</span>
+          <span className="overall-score">{latest.overallScore}</span>
           <span className="overall-max">/ 100</span>
           <span className="overall-label">Interview Readiness</span>
+          <span className="overall-sub">+{pointsGained} points over your last {Math.min(3, trend.length - 1)} interviews</span>
         </div>
         <div className="skill-cards">
-          <SkillCard label="Technical Knowledge" value={data.technical} />
-          <SkillCard label="Communication" value={data.communication} />
-          <SkillCard label="Problem Solving" value={data.problemSolving} />
-          <SkillCard label="Confidence" value={data.confidence} />
+          <SkillCard label="Technical Knowledge" value={latest.technical} tone="lavender" />
+          <SkillCard label="Communication" value={latest.communication} tone="mint" />
+          <SkillCard label="Problem Solving" value={latest.problemSolving} tone="peach" />
+          <SkillCard label="Confidence" value={latest.confidence} tone="powder" />
         </div>
       </section>
 
       <section className="card trend-section">
-        <h2 className="section-title">Performance Across Interview</h2>
+        <h2 className="section-title">Your Progress</h2>
         <div className="trend-chart">
-          {data.questions.map((q) => (
-            <div className="trend-col" key={q.number}>
-              <span className="trend-score">{q.score}</span>
+          {trend.map((t) => (
+            <div className="trend-col" key={t.number}>
+              <span className="trend-score">{t.score}</span>
               <div className="trend-bar-track">
-                <div
-                  className="trend-bar-fill"
-                  style={{ height: `${(q.score / maxScore) * 100}%` }}
-                />
+                <div className="trend-bar-fill" style={{ height: `${(t.score / maxTrend) * 100}%` }} />
               </div>
-              <span className={`badge badge-${q.difficulty.toLowerCase()} trend-badge`}>
-                {q.difficulty}
-              </span>
-              <span className="trend-q">Q{q.number}</span>
+              <span className="trend-label">Interview {t.number}</span>
             </div>
           ))}
         </div>
+        <p className="trend-note">You're improving consistently.</p>
       </section>
 
-      <div className="two-col">
-        <section className="card list-section">
-          <h2 className="section-title">Your Strengths</h2>
-          <ul className="pill-list">
-            {data.strengths.map((s) => (
-              <li key={s} className="pill pill-good">
-                <span className="pill-icon">&#10003;</span>
-                {s}
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        <section className="card list-section">
-          <h2 className="section-title">Areas to Improve</h2>
-          <ul className="pill-list">
-            {data.improvements.map((s) => (
-              <li key={s} className="pill pill-warn">
-                <span className="pill-icon">&#9888;</span>
-                {s}
-              </li>
-            ))}
-          </ul>
-        </section>
-      </div>
-
-      <section className="card recommendation-card">
-        <span className="rec-eyebrow">AI Coach Recommendation</span>
-        <p className="rec-text">{data.recommendation}</p>
+      <section className="recent-section">
+        <div className="recent-header">
+          <h2 className="section-title">Recent Interviews</h2>
+          <button className="btn btn-ghost" onClick={onViewAllHistory}>
+            View all →
+          </button>
+        </div>
+        <div className="recent-grid">
+          {history.slice(0, 4).map((h) => (
+            <button className="card recent-card" key={h.id} onClick={() => onViewHistoryItem(h.id)}>
+              <div className="recent-top">
+                <div>
+                  <h3>{h.role}</h3>
+                  <span className="recent-type">{h.type} Interview</span>
+                </div>
+                {h.improvement > 0 && <span className="improvement-pill">↑ +{h.improvement}</span>}
+              </div>
+              <div className="recent-score">{h.overallScore}<span>/100</span></div>
+              <div className="recent-meta">
+                <span>{h.questionsCount} Questions</span>
+                <span className="dot">&middot;</span>
+                <span>{h.duration}</span>
+              </div>
+              <span className="recent-link">View Report →</span>
+            </button>
+          ))}
+        </div>
       </section>
-
-      <div className="final-actions">
-        <button className="btn btn-secondary" onClick={onPracticeAgain}>
-          Practice Again
-        </button>
-        <button className="btn btn-primary" onClick={onNewInterview}>
-          Start New Interview
-        </button>
-      </div>
     </div>
   );
 }
 
-function SkillCard({ label, value }) {
+function SkillCard({ label, value, tone }) {
   return (
-    <div className="skill-card">
+    <div className={`skill-card tone-${tone}`}>
       <div className="skill-top">
         <span className="skill-label">{label}</span>
         <span className="skill-value">{value}</span>

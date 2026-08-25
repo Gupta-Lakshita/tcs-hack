@@ -1,66 +1,99 @@
 import { useState } from "react";
-import { generateFeedback, nextDifficulty, pickQuestion } from "../data/mockData.js";
+import Companion from "../components/Companion.jsx";
+import {
+  generateFeedback,
+  nextDifficulty,
+  pickQuestion,
+  scoreLabel,
+  getTeachMeContent,
+  COMPANION_LINES,
+} from "../data/mockData.js";
 import "./Interview.css";
 
-function initialQuestion(interviewType) {
-  return { ...pickQuestion(interviewType, "Medium", []), difficulty: "Medium" };
+function pickLine(list) {
+  return list[Math.floor(Math.random() * list.length)];
+}
+
+function initialQuestion(interviewType, hasResume) {
+  return { ...pickQuestion(interviewType, "Medium", [], hasResume), difficulty: "Medium" };
 }
 
 export default function Interview({ config, totalQuestions, onFinish }) {
   const interviewType = config?.type || "Technical";
+  const hasResume = Boolean(config?.resumeName);
 
-  const [question, setQuestion] = useState(() => initialQuestion(interviewType));
+  const [question, setQuestion] = useState(() => initialQuestion(interviewType, hasResume));
   const [usedTexts, setUsedTexts] = useState(() => [question.text]);
   const [qIndex, setQIndex] = useState(1);
   const [answer, setAnswer] = useState("");
+  const [phase, setPhase] = useState("answering"); // answering | feedback | teach | retry-feedback
   const [feedback, setFeedback] = useState(null);
-  const [history, setHistory] = useState([]);
-  const [isLast, setIsLast] = useState(false);
+  const [beforeScore, setBeforeScore] = useState(null);
+  const [companionLine, setCompanionLine] = useState("");
+  const [sessionLog, setSessionLog] = useState([]);
 
   function handleSubmit(e) {
     e.preventDefault();
     if (!answer.trim()) return;
     const fb = generateFeedback(answer);
     setFeedback(fb);
-    setHistory((h) => [
-      ...h,
-      { number: qIndex, score: Math.round(fb.average * 10), difficulty: question.difficulty },
-    ]);
-    setIsLast(qIndex >= totalQuestions);
+
+    const bucket = scoreLabel(fb.average);
+    setCompanionLine(
+      pickLine(
+        bucket === "strong"
+          ? COMPANION_LINES.strongAnswer
+          : bucket === "average"
+          ? COMPANION_LINES.averageAnswer
+          : COMPANION_LINES.weakAnswer
+      )
+    );
+
+    setPhase(phase === "teach" || beforeScore !== null ? "retry-feedback" : "feedback");
   }
 
-  function handleNext() {
-    if (isLast) {
-      const scores = [...history];
-      const overall = Math.round(
-        scores.reduce((sum, s) => sum + s.score, 0) / scores.length
-      );
-      const technical = Math.round(
-        scores.reduce((sum, s, i) => sum + s.score + (i % 2 === 0 ? 2 : -2), 0) / scores.length
-      );
-      onFinish({
-        overallScore: clampScore(overall),
-        technical: clampScore(technical),
-        communication: clampScore(overall - 6),
-        problemSolving: clampScore(overall + 2),
-        confidence: clampScore(overall - 3),
-        questions: scores,
-        strengths: pickStrengths(overall),
-        improvements: pickImprovements(overall),
-        recommendation:
-          "Focus on structuring behavioral answers using STAR and keep technical explanations concise.",
-      });
+  function handleTeachMe() {
+    setBeforeScore(Math.round(feedback.average));
+    setPhase("teach");
+  }
+
+  function handleTryAgain() {
+    setAnswer("");
+    setPhase("answering");
+  }
+
+  function finalize(taught) {
+    const entry = {
+      number: qIndex,
+      topic: question.topic,
+      difficulty: question.difficulty,
+      question: question.text,
+      answer,
+      score: Math.round(feedback.average * 10),
+      taught,
+    };
+    const updatedLog = [...sessionLog, entry];
+    setSessionLog(updatedLog);
+
+    if (qIndex >= totalQuestions) {
+      onFinish(updatedLog);
       return;
     }
 
     const newDifficulty = nextDifficulty(question.difficulty, feedback.average);
-    const nextQ = pickQuestion(interviewType, newDifficulty, usedTexts);
+    const preferredTopic = taught ? question.topic : undefined;
+    const nextQ = pickQuestion(interviewType, newDifficulty, usedTexts, hasResume, preferredTopic);
+
     setUsedTexts((u) => [...u, nextQ.text]);
     setQuestion({ ...nextQ, difficulty: newDifficulty });
     setQIndex((i) => i + 1);
     setAnswer("");
     setFeedback(null);
+    setBeforeScore(null);
+    setPhase("answering");
   }
+
+  const teachContent = phase === "teach" ? getTeachMeContent(question.topic) : null;
 
   return (
     <div className="interview-wrap">
@@ -75,14 +108,13 @@ export default function Interview({ config, totalQuestions, onFinish }) {
 
       <div className="card question-card">
         <div className="question-tags">
-          <span className={`badge badge-${question.difficulty.toLowerCase()}`}>
-            {question.difficulty}
-          </span>
+          <span className={`badge badge-${question.difficulty.toLowerCase()}`}>{question.difficulty}</span>
           <span className="badge badge-neutral">{question.topic}</span>
+          {question.personalized && <span className="badge badge-powder">From your resume</span>}
         </div>
         <h2 className="question-text">{question.text}</h2>
 
-        {!feedback && (
+        {(phase === "answering") && (
           <form onSubmit={handleSubmit} className="answer-form">
             <textarea
               className="answer-input"
@@ -98,7 +130,7 @@ export default function Interview({ config, totalQuestions, onFinish }) {
           </form>
         )}
 
-        {feedback && (
+        {phase === "feedback" && feedback && (
           <div className="feedback-panel">
             <div className="feedback-scores">
               <ScoreItem label="Technical Accuracy" value={feedback.technical} />
@@ -110,8 +142,63 @@ export default function Interview({ config, totalQuestions, onFinish }) {
               <span className="coach-label">AI Coach Tip</span>
               <p>{feedback.tip}</p>
             </div>
-            <button className="btn btn-primary next-btn" onClick={handleNext}>
-              {isLast ? "View Performance Report →" : "Next Question →"}
+            <Companion size="sm" mood={scoreLabel(feedback.average) === "strong" ? "excited" : "neutral"} message={companionLine} />
+            <div className="feedback-actions">
+              <button className="btn btn-secondary" onClick={handleTeachMe}>
+                I Don't Know — Teach Me
+              </button>
+              <button className="btn btn-primary next-btn" onClick={() => finalize(false)}>
+                {qIndex >= totalQuestions ? "View Performance Report →" : "Continue Interview →"}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {phase === "teach" && teachContent && (
+          <div className="teach-panel">
+            <span className="teach-label">Let's break it down</span>
+            <p className="teach-concept">{teachContent.concept}</p>
+
+            <div className="teach-block">
+              <span className="teach-block-label">Simple Example</span>
+              <p>{teachContent.example}</p>
+            </div>
+
+            <div className="teach-block teach-tip-block">
+              <span className="teach-block-label">Interview Tip</span>
+              <p>{teachContent.tip}</p>
+            </div>
+
+            <button className="btn btn-primary" onClick={handleTryAgain}>
+              Try Again →
+            </button>
+          </div>
+        )}
+
+        {phase === "retry-feedback" && feedback && (
+          <div className="feedback-panel">
+            <div className="before-after">
+              <div className="ba-item">
+                <span className="ba-label">Before</span>
+                <span className="ba-value ba-before">{beforeScore}/10</span>
+              </div>
+              <span className="ba-arrow">→</span>
+              <div className="ba-item">
+                <span className="ba-label">After</span>
+                <span className="ba-value ba-after">{Math.round(feedback.average)}/10</span>
+              </div>
+            </div>
+            <Companion size="sm" mood="excited" message={COMPANION_LINES.teachMeRetry} />
+
+            <div className="feedback-scores">
+              <ScoreItem label="Technical Accuracy" value={feedback.technical} />
+              <ScoreItem label="Relevance" value={feedback.relevance} />
+              <ScoreItem label="Clarity" value={feedback.clarity} />
+              <ScoreItem label="Confidence" value={feedback.confidence} />
+            </div>
+
+            <button className="btn btn-primary next-btn" onClick={() => finalize(true)}>
+              {qIndex >= totalQuestions ? "View Performance Report →" : "Continue Interview →"}
             </button>
           </div>
         )}
@@ -132,30 +219,4 @@ function ScoreItem({ label, value }) {
       </div>
     </div>
   );
-}
-
-function clampScore(n) {
-  return Math.max(35, Math.min(98, n));
-}
-
-function pickStrengths(overall) {
-  const all = [
-    "Strong technical fundamentals",
-    "Good relevance to questions",
-    "Good problem-solving approach",
-    "Clear and structured communication",
-    "Handled harder follow-ups well",
-  ];
-  return overall >= 70 ? all.slice(0, 3) : all.slice(2, 5);
-}
-
-function pickImprovements(overall) {
-  const all = [
-    "Keep answers more concise",
-    "Use stronger STAR structure",
-    "Provide more concrete examples",
-    "Slow down and structure thoughts before answering",
-    "Dig deeper into core fundamentals",
-  ];
-  return overall >= 70 ? all.slice(0, 3) : all.slice(2, 5);
 }

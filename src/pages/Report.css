@@ -1,10 +1,10 @@
-.dashboard {
+.report-wrap {
   display: flex;
   flex-direction: column;
   gap: 22px;
 }
 
-.dash-greeting {
+.report-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -12,10 +12,9 @@
   flex-wrap: wrap;
 }
 
-.dash-greeting h1 {
-  font-size: 32px;
+.report-header h1 {
+  font-size: 30px;
   font-weight: 800;
-  letter-spacing: -0.01em;
   margin-bottom: 6px;
 }
 
@@ -24,7 +23,13 @@
   font-size: 15px;
 }
 
-/* Hero */
+.section-title {
+  font-size: 15px;
+  font-weight: 800;
+  margin-bottom: 18px;
+}
+
+/* Hero (shared visual language with Dashboard) */
 .hero-section {
   padding: 30px;
   display: flex;
@@ -37,11 +42,11 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  min-width: 180px;
+  min-width: 170px;
 }
 
 .overall-score {
-  font-size: 60px;
+  font-size: 58px;
   font-weight: 800;
   line-height: 1;
   color: var(--accent-strong);
@@ -61,13 +66,6 @@
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--text-muted);
-}
-
-.overall-sub {
-  margin-top: 6px;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--mint-text);
 }
 
 .skill-cards {
@@ -122,7 +120,7 @@
   display: flex;
   align-items: flex-end;
   gap: 18px;
-  height: 150px;
+  height: 170px;
   padding-top: 8px;
 }
 
@@ -138,13 +136,12 @@
 .trend-score {
   font-weight: 800;
   font-size: 13px;
-  color: var(--accent-strong);
 }
 
 .trend-bar-track {
   flex: 1;
   width: 100%;
-  max-width: 42px;
+  max-width: 44px;
   display: flex;
   align-items: flex-end;
   background: var(--bg-soft);
@@ -159,114 +156,135 @@
   transition: height 0.5s ease;
 }
 
-.trend-label {
-  font-size: 11px;
+.trend-badge {
+  padding: 3px 8px;
+  font-size: 10px;
+}
+
+.trend-q {
+  font-size: 12px;
   color: var(--text-faint);
-  font-weight: 600;
-  text-align: center;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.taught-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--peach-text);
+  display: inline-block;
 }
 
 .trend-note {
   margin-top: 16px;
   font-size: 13px;
   font-weight: 700;
-  color: var(--mint-text);
+  color: var(--text-muted);
 }
 
-/* Recent */
-.recent-header {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-}
-
-.recent-grid {
+/* Two column strengths/improvements */
+.two-col {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
 }
 
-.recent-card {
-  padding: 20px 22px;
+.list-section {
+  padding: 24px 26px;
+}
+
+.pill-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  text-align: left;
-  cursor: pointer;
-  border: 1px solid var(--card-border);
-  transition: border-color 0.15s ease, transform 0.12s ease;
-  font-family: inherit;
 }
 
-.recent-card:hover {
-  border-color: var(--accent);
-  transform: translateY(-2px);
-}
-
-.recent-top {
+.pill {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  background: var(--bg-soft);
+}
+
+.pill-icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.pill-good .pill-icon {
+  background: var(--mint);
+  color: var(--mint-text);
+}
+
+.pill-warn .pill-icon {
+  background: var(--peach);
+  color: var(--peach-text);
+}
+
+/* Recommendation */
+.recommendation-card {
+  padding: 26px 30px;
+  background: var(--lavender);
+  border-color: transparent;
+  display: flex;
+  flex-direction: column;
   gap: 10px;
 }
 
-.recent-top h3 {
-  font-size: 16px;
-  font-weight: 800;
-}
-
-.recent-type {
-  font-size: 12.5px;
-  color: var(--text-muted);
-  font-weight: 600;
-}
-
-.improvement-pill {
-  background: var(--mint);
-  color: var(--mint-text);
+.rec-eyebrow {
   font-size: 12px;
   font-weight: 800;
-  padding: 4px 10px;
-  border-radius: 999px;
-  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--lavender-text);
 }
 
-.recent-score {
-  font-size: 30px;
-  font-weight: 800;
-  color: var(--accent-strong);
-}
-
-.recent-score span {
-  font-size: 15px;
-  color: var(--text-faint);
+.rec-text {
+  font-size: 18px;
   font-weight: 700;
+  line-height: 1.5;
 }
 
-.recent-meta {
+/* Final actions */
+.final-actions {
   display: flex;
-  gap: 8px;
-  font-size: 13px;
-  color: var(--text-muted);
-  font-weight: 600;
-}
-
-.recent-link {
+  justify-content: center;
+  gap: 16px;
   margin-top: 4px;
-  font-size: 13px;
-  font-weight: 800;
-  color: var(--accent-strong);
 }
 
 @media (max-width: 800px) {
   .skill-cards {
     grid-template-columns: repeat(2, 1fr);
   }
-  .recent-grid {
+  .two-col {
     grid-template-columns: 1fr;
   }
   .hero-section {
     flex-direction: column;
     align-items: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .final-actions {
+    flex-direction: column;
   }
 }

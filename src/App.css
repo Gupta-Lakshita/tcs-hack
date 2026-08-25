@@ -1,33 +1,24 @@
-.hero-copy {
-  text-align: center;
-  max-width: 640px;
-  margin: 0 auto 40px;
-}
-
-.hero-copy h1 {
-  font-size: 40px;
+.section-title {
+  font-size: 15px;
   font-weight: 800;
-  letter-spacing: -0.01em;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 
-.hero-copy .tagline {
-  font-size: 17px;
-  color: var(--text-muted);
-}
-
-.hero-copy .eyebrow {
+.eyebrow {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  font-weight: 800;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--accent-strong);
-  background: var(--accent-soft);
-  border: 1px solid rgba(124, 108, 246, 0.25);
+  color: var(--lavender-text);
+  background: var(--lavender);
   padding: 6px 14px;
   border-radius: 999px;
-  margin-bottom: 20px;
+}
+
+.page-narrow {
+  max-width: 640px;
+  margin: 0 auto;
 }
