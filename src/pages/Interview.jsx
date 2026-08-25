@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Companion from "../components/Companion.jsx";
+import AnswerTimer from "../components/AnswerTimer.jsx";
 import {
   generateFeedback,
   nextDifficulty,
@@ -7,6 +8,7 @@ import {
   scoreLabel,
   getTeachMeContent,
   COMPANION_LINES,
+  INTERVIEWER_FOLLOWUPS,
 } from "../data/mockData.js";
 import "./Interview.css";
 
@@ -14,15 +16,18 @@ function pickLine(list) {
   return list[Math.floor(Math.random() * list.length)];
 }
 
-function initialQuestion(interviewType, hasResume) {
-  return { ...pickQuestion(interviewType, "Medium", [], hasResume), difficulty: "Medium" };
+function initialQuestion(interviewType, hasResume, domain) {
+  return { ...pickQuestion(interviewType, "Medium", [], hasResume, undefined, domain), difficulty: "Medium" };
 }
 
-export default function Interview({ config, totalQuestions, onFinish }) {
+export default function Interview({ config, domain, totalQuestions, onFinish }) {
   const interviewType = config?.type || "Technical";
+  const coachStyle = config?.coach || "Friendly";
   const hasResume = Boolean(config?.resumeName);
+  const timerEnabled = Boolean(config?.timerEnabled);
+  const timerSeconds = config?.timerSeconds || 60;
 
-  const [question, setQuestion] = useState(() => initialQuestion(interviewType, hasResume));
+  const [question, setQuestion] = useState(() => initialQuestion(interviewType, hasResume, domain));
   const [usedTexts, setUsedTexts] = useState(() => [question.text]);
   const [qIndex, setQIndex] = useState(1);
   const [answer, setAnswer] = useState("");
@@ -31,11 +36,13 @@ export default function Interview({ config, totalQuestions, onFinish }) {
   const [beforeScore, setBeforeScore] = useState(null);
   const [companionLine, setCompanionLine] = useState("");
   const [sessionLog, setSessionLog] = useState([]);
+  const [lastBucket, setLastBucket] = useState(null);
+  const [timeUp, setTimeUp] = useState(false);
 
   function handleSubmit(e) {
     e.preventDefault();
     if (!answer.trim()) return;
-    const fb = generateFeedback(answer);
+    const fb = generateFeedback(answer, coachStyle);
     setFeedback(fb);
 
     const bucket = scoreLabel(fb.average);
@@ -49,7 +56,7 @@ export default function Interview({ config, totalQuestions, onFinish }) {
       )
     );
 
-    setPhase(phase === "teach" || beforeScore !== null ? "retry-feedback" : "feedback");
+    setPhase(beforeScore !== null ? "retry-feedback" : "feedback");
   }
 
   function handleTeachMe() {
@@ -59,10 +66,12 @@ export default function Interview({ config, totalQuestions, onFinish }) {
 
   function handleTryAgain() {
     setAnswer("");
+    setTimeUp(false);
     setPhase("answering");
   }
 
   function finalize(taught) {
+    const bucket = scoreLabel(feedback.average);
     const entry = {
       number: qIndex,
       topic: question.topic,
@@ -82,7 +91,7 @@ export default function Interview({ config, totalQuestions, onFinish }) {
 
     const newDifficulty = nextDifficulty(question.difficulty, feedback.average);
     const preferredTopic = taught ? question.topic : undefined;
-    const nextQ = pickQuestion(interviewType, newDifficulty, usedTexts, hasResume, preferredTopic);
+    const nextQ = pickQuestion(interviewType, newDifficulty, usedTexts, hasResume, preferredTopic, domain);
 
     setUsedTexts((u) => [...u, nextQ.text]);
     setQuestion({ ...nextQ, difficulty: newDifficulty });
@@ -90,10 +99,13 @@ export default function Interview({ config, totalQuestions, onFinish }) {
     setAnswer("");
     setFeedback(null);
     setBeforeScore(null);
+    setLastBucket(bucket);
+    setTimeUp(false);
     setPhase("answering");
   }
 
   const teachContent = phase === "teach" ? getTeachMeContent(question.topic) : null;
+  const followupLine = qIndex > 1 && lastBucket && phase === "answering" ? INTERVIEWER_FOLLOWUPS[coachStyle]?.[lastBucket] : null;
 
   return (
     <div className="interview-wrap">
@@ -106,6 +118,8 @@ export default function Interview({ config, totalQuestions, onFinish }) {
         </div>
       </div>
 
+      {followupLine && <p className="interviewer-followup">“{followupLine}”</p>}
+
       <div className="card question-card">
         <div className="question-tags">
           <span className={`badge badge-${question.difficulty.toLowerCase()}`}>{question.difficulty}</span>
@@ -116,14 +130,20 @@ export default function Interview({ config, totalQuestions, onFinish }) {
 
         {(phase === "answering") && (
           <form onSubmit={handleSubmit} className="answer-form">
-            <textarea
-              className="answer-input"
-              placeholder="Type your answer here&hellip; be as detailed as you would in a real interview."
-              value={answer}
-              onChange={(e) => setAnswer(e.target.value)}
-              rows={8}
-              autoFocus
-            />
+            <div className="answer-box-wrap">
+              <textarea
+                className="answer-input"
+                placeholder="Type your answer here&hellip; be as detailed as you would in a real interview."
+                value={answer}
+                onChange={(e) => setAnswer(e.target.value)}
+                rows={8}
+                autoFocus
+              />
+              {timerEnabled && (
+                <AnswerTimer key={`${qIndex}-${beforeScore !== null}`} seconds={timerSeconds} onTimeUp={() => setTimeUp(true)} />
+              )}
+            </div>
+            {timeUp && <p className="timer-message">Time's up — finish your thought or submit your answer.</p>}
             <button type="submit" className="btn btn-primary" disabled={!answer.trim()}>
               Submit Answer
             </button>
@@ -144,8 +164,8 @@ export default function Interview({ config, totalQuestions, onFinish }) {
             </div>
             <Companion size="sm" mood={scoreLabel(feedback.average) === "strong" ? "excited" : "neutral"} message={companionLine} />
             <div className="feedback-actions">
-              <button className="btn btn-secondary" onClick={handleTeachMe}>
-                I Don't Know — Teach Me
+              <button className="btn btn-secondary teach-cta" onClick={handleTeachMe}>
+                I Can Teach You Too
               </button>
               <button className="btn btn-primary next-btn" onClick={() => finalize(false)}>
                 {qIndex >= totalQuestions ? "View Performance Report →" : "Continue Interview →"}
@@ -156,7 +176,8 @@ export default function Interview({ config, totalQuestions, onFinish }) {
 
         {phase === "teach" && teachContent && (
           <div className="teach-panel">
-            <span className="teach-label">Let's break it down</span>
+            <span className="teach-label">I Can Teach You Too</span>
+            <p className="teach-support">Not sure about this one? No problem. I'll break it down, then you can try again.</p>
             <p className="teach-concept">{teachContent.concept}</p>
 
             <div className="teach-block">

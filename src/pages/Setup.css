@@ -69,11 +69,124 @@
 
 .type-option:hover {
   border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
 }
 
 .type-option.selected {
   border-color: var(--accent);
   background: var(--lavender);
+}
+
+.path-summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--lavender);
+  border-radius: var(--radius-sm);
+  padding: 14px 18px;
+  margin-bottom: 18px;
+}
+
+.path-summary-emoji {
+  font-size: 20px;
+}
+
+.path-summary-role {
+  display: block;
+  font-weight: 800;
+  font-size: 15px;
+  color: var(--text);
+}
+
+.path-summary-sub {
+  display: block;
+  font-size: 12.5px;
+  color: var(--lavender-text);
+  font-weight: 600;
+}
+
+.focus-banner {
+  background: var(--peach);
+  color: var(--peach-text);
+  border-radius: var(--radius-sm);
+  padding: 12px 18px;
+  font-size: 13.5px;
+  font-weight: 600;
+  margin-bottom: 18px;
+}
+
+.coach-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.coach-option {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+  padding: 16px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--card-border);
+  background: var(--bg-soft);
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.coach-option:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.coach-option.selected {
+  border-color: var(--accent);
+  background: var(--lavender);
+}
+
+.coach-emoji {
+  font-size: 22px;
+}
+
+.coach-name {
+  font-weight: 800;
+  font-size: 14.5px;
+}
+
+.coach-tagline {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.coach-example {
+  font-size: 11.5px;
+  color: var(--text-faint);
+  font-style: italic;
+  line-height: 1.4;
+  margin-top: 2px;
+}
+
+.timer-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.timer-durations {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.chip-sm {
+  padding: 6px 13px;
+  font-size: 12.5px;
 }
 
 .type-name {
@@ -174,7 +287,8 @@
 }
 
 @media (max-width: 640px) {
-  .type-grid {
+  .type-grid,
+  .coach-grid {
     grid-template-columns: 1fr;
   }
 }

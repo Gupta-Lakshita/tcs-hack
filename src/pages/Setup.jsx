@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { COACH_STYLES, SKILL_ROADMAPS, TIMER_OPTIONS } from "../data/mockData.js";
 import "./Setup.css";
 
 const INTERVIEW_TYPES = [
@@ -7,12 +8,11 @@ const INTERVIEW_TYPES = [
   { key: "Mixed", desc: "A blend of both" },
 ];
 
-const DIFFICULTY_PREFS = ["Adaptive", "Easy", "Medium", "Hard"];
-
-export default function Setup({ onContinue }) {
-  const [type, setType] = useState("Technical");
-  const [role, setRole] = useState("");
-  const [difficultyPref, setDifficultyPref] = useState("Adaptive");
+export default function Setup({ pathInfo, focusSkill, onContinue }) {
+  const [type, setType] = useState(focusSkill ? SKILL_ROADMAPS[focusSkill]?.interviewType || "Technical" : "Technical");
+  const [coach, setCoach] = useState("Friendly");
+  const [timerEnabled, setTimerEnabled] = useState(false);
+  const [timerSeconds, setTimerSeconds] = useState(60);
   const [resumeName, setResumeName] = useState("");
 
   function handleFile(e) {
@@ -22,12 +22,7 @@ export default function Setup({ onContinue }) {
 
   function handleSubmit(e) {
     e.preventDefault();
-    onContinue({
-      type,
-      role: role.trim() || "Software Engineer",
-      difficultyPref,
-      resumeName,
-    });
+    onContinue({ type, coach, timerEnabled, timerSeconds, resumeName });
   }
 
   return (
@@ -37,21 +32,26 @@ export default function Setup({ onContinue }) {
         <h1>Let's set up your practice round.</h1>
       </div>
 
-      <form className="card setup-card" onSubmit={handleSubmit}>
-        <div className="field-group">
-          <label className="field-label" htmlFor="role">
-            Target Role
-          </label>
-          <input
-            id="role"
-            className="text-input"
-            type="text"
-            placeholder="e.g. Software Engineer, Data Analyst, SDE-1"
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-          />
+      {pathInfo && (
+        <div className="path-summary">
+          <span className="path-summary-emoji">🎯</span>
+          <div>
+            <span className="path-summary-role">{pathInfo.role}</span>
+            <span className="path-summary-sub">
+              {pathInfo.category}
+              {pathInfo.track ? ` · ${pathInfo.track}` : ""}
+            </span>
+          </div>
         </div>
+      )}
 
+      {focusSkill && (
+        <div className="focus-banner">
+          Focused on <strong>{focusSkill}</strong> — questions and coaching will lean toward this skill.
+        </div>
+      )}
+
+      <form className="card setup-card" onSubmit={handleSubmit}>
         <div className="field-group">
           <label className="field-label">Interview Type</label>
           <div className="type-grid">
@@ -70,22 +70,61 @@ export default function Setup({ onContinue }) {
         </div>
 
         <div className="field-group">
-          <label className="field-label">Difficulty Preference</label>
-          <div className="chip-row">
-            {DIFFICULTY_PREFS.map((d) => (
+          <label className="field-label">Interviewer Coach</label>
+          <div className="coach-grid">
+            {COACH_STYLES.map((c) => (
               <button
                 type="button"
-                key={d}
-                className={`chip ${difficultyPref === d ? "selected" : ""}`}
-                onClick={() => setDifficultyPref(d)}
+                key={c.key}
+                className={`coach-option ${coach === c.key ? "selected" : ""}`}
+                onClick={() => setCoach(c.key)}
               >
-                {d}
+                <span className="coach-emoji">{c.emoji}</span>
+                <span className="coach-name">{c.label}</span>
+                <span className="coach-tagline">{c.tagline}</span>
+                <span className="coach-example">{c.example}</span>
               </button>
             ))}
           </div>
-          {difficultyPref === "Adaptive" && (
-            <span className="field-hint">Recommended — questions adjust to how you're performing.</span>
-          )}
+        </div>
+
+        <div className="field-group">
+          <label className="field-label">Answer Timer</label>
+          <div className="timer-row">
+            <button
+              type="button"
+              className={`chip ${!timerEnabled ? "selected" : ""}`}
+              onClick={() => setTimerEnabled(false)}
+            >
+              Off
+            </button>
+            <button
+              type="button"
+              className={`chip ${timerEnabled ? "selected" : ""}`}
+              onClick={() => setTimerEnabled(true)}
+            >
+              On
+            </button>
+            {timerEnabled && (
+              <div className="timer-durations">
+                {TIMER_OPTIONS.map((s) => (
+                  <button
+                    type="button"
+                    key={s}
+                    className={`chip chip-sm ${timerSeconds === s ? "selected" : ""}`}
+                    onClick={() => setTimerSeconds(s)}
+                  >
+                    {s}s
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+          <span className="field-hint">
+            {timerEnabled
+              ? "A gentle countdown will show near the answer box. Nothing is auto-submitted."
+              : "Practice at your own pace — recommended for your first few rounds."}
+          </span>
         </div>
 
         <div className="field-group">
