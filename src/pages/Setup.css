@@ -1,0 +1,133 @@
+.setup-card {
+  max-width: 620px;
+  margin: 0 auto;
+  padding: 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.field-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.optional {
+  text-transform: none;
+  font-weight: 500;
+  color: var(--text-faint);
+}
+
+.type-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.type-option {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--card-border);
+  background: var(--bg-elevated);
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s ease, background 0.15s ease, transform 0.1s ease;
+}
+
+.type-option:hover {
+  border-color: var(--accent);
+}
+
+.type-option.selected {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  box-shadow: 0 0 0 1px var(--accent) inset;
+}
+
+.type-name {
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.type-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.text-input {
+  background: var(--bg-elevated);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-sm);
+  padding: 13px 14px;
+  color: var(--text);
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.text-input:focus {
+  border-color: var(--accent);
+}
+
+.text-input::placeholder {
+  color: var(--text-faint);
+}
+
+.upload-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1.5px dashed var(--card-border);
+  border-radius: var(--radius-sm);
+  padding: 18px 16px;
+  color: var(--text-muted);
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.upload-box:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.upload-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.start-btn {
+  width: 100%;
+  padding: 15px;
+  font-size: 16px;
+  margin-top: 8px;
+}
+
+@media (max-width: 640px) {
+  .type-grid {
+    grid-template-columns: 1fr;
+  }
+}

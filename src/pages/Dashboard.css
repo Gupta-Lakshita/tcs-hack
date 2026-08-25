@@ -1,0 +1,263 @@
+.dashboard-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.dash-header h1 {
+  font-size: 30px;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.dash-header .tagline {
+  color: var(--text-muted);
+  font-size: 15px;
+}
+
+.section-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+
+/* Hero */
+.hero-section {
+  padding: 32px;
+  display: flex;
+  align-items: center;
+  gap: 44px;
+  flex-wrap: wrap;
+}
+
+.overall-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 160px;
+}
+
+.overall-score {
+  font-size: 64px;
+  font-weight: 800;
+  line-height: 1;
+  background: linear-gradient(135deg, var(--accent-strong), var(--good));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.overall-max {
+  font-size: 18px;
+  color: var(--text-faint);
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.overall-label {
+  margin-top: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.skill-cards {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  min-width: 280px;
+}
+
+.skill-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.skill-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.skill-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.skill-value {
+  font-size: 20px;
+  font-weight: 800;
+}
+
+/* Trend */
+.trend-section {
+  padding: 28px 32px;
+}
+
+.trend-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 20px;
+  height: 180px;
+  padding-top: 8px;
+}
+
+.trend-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  height: 100%;
+}
+
+.trend-score {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.trend-bar-track {
+  flex: 1;
+  width: 100%;
+  max-width: 46px;
+  display: flex;
+  align-items: flex-end;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.trend-bar-fill {
+  width: 100%;
+  background: linear-gradient(180deg, var(--accent-strong), var(--accent));
+  border-radius: 8px;
+  transition: height 0.5s ease;
+}
+
+.trend-badge {
+  padding: 3px 8px;
+  font-size: 10px;
+}
+
+.trend-q {
+  font-size: 12px;
+  color: var(--text-faint);
+  font-weight: 600;
+}
+
+/* Two column strengths/improvements */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.list-section {
+  padding: 26px 28px;
+}
+
+.pill-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid var(--card-border);
+  background: var(--bg-elevated);
+}
+
+.pill-icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.pill-good .pill-icon {
+  background: rgba(74, 222, 128, 0.15);
+  color: var(--good);
+}
+
+.pill-warn .pill-icon {
+  background: rgba(251, 191, 36, 0.15);
+  color: var(--warn);
+}
+
+/* Recommendation */
+.recommendation-card {
+  padding: 28px 32px;
+  background: linear-gradient(135deg, rgba(124, 108, 246, 0.16), rgba(124, 108, 246, 0.04));
+  border-color: rgba(124, 108, 246, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rec-eyebrow {
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent-strong);
+}
+
+.rec-text {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+/* Final actions */
+.final-actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+@media (max-width: 800px) {
+  .skill-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .two-col {
+    grid-template-columns: 1fr;
+  }
+  .hero-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .trend-chart {
+    gap: 10px;
+  }
+  .final-actions {
+    flex-direction: column;
+  }
+}
